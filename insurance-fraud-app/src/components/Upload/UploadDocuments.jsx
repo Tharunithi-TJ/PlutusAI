@@ -67,11 +67,31 @@ const UploadDocuments = () => {
     setPreview(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Handle form submission
-    console.log('Form data:', formData);
+  
+    const data = new FormData();
+    data.append('claimType', formData.claimType);
+    data.append('description', formData.description);
+    formData.files.forEach(file => {
+      data.append('files', file);
+    });
+  
+    try {
+      const res = await fetch('http://localhost:5000/submit-claim', {
+        method: 'POST',
+        body: data
+      });
+  
+      const result = await res.json();
+      console.log('Server response:', result);
+      alert('Claim submitted successfully!');
+    } catch (err) {
+      console.error('Error submitting claim:', err);
+      alert('Failed to submit claim.');
+    }
   };
+  
 
   return (
     <div className="upload-container">

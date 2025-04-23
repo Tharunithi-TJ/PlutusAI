@@ -39,6 +39,7 @@
 
 .claims-table td {
   padding: 1.25rem 1.5rem;
+  text-align: left;
   color: #374151;
   border-bottom: 1px solid #e5e7eb;
   font-size: 0.95rem;
