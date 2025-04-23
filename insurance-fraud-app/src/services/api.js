@@ -11,7 +11,7 @@ const api = axios.create({
 
 // Add a request interceptor to include the JWT token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
+  const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -20,8 +20,20 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+// Add a response interceptor to handle errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authService = {
-  login: (username, password) => api.post('/users/login', { username, password }),
+  login: (email, password) => api.post('/users/login', { username: email, password }),
   register: (userData) => api.post('/users/register', userData),
   getProfile: () => api.get('/users/profile'),
 };

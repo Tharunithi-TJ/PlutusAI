@@ -10,6 +10,10 @@ class User(BaseModel):
     password_hash = db.Column(db.String(128))
     role = db.Column(db.String(20), nullable=False)  # 'policyholder', 'employee', 'admin'
     is_verified = db.Column(db.Boolean, default=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    phone_number = db.Column(db.String(20))
+    address = db.Column(db.Text)
     
     # Relationships
     policies = db.relationship('Policy', backref='user', lazy=True)
@@ -25,6 +29,19 @@ class User(BaseModel):
     
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'role': self.role,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'phone_number': self.phone_number,
+            'address': self.address,
+            'is_verified': self.is_verified
+        }
     
     def __repr__(self):
         return f'<User {self.username}>' 

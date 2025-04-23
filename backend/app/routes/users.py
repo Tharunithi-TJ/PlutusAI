@@ -19,12 +19,7 @@ def login():
     token = generate_token(user)
     return jsonify({
         'access_token': token,
-        'user': {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'role': user.role
-        }
+        'user': user.to_dict()
     })
 
 @users_bp.route('/register', methods=['POST'])
@@ -34,22 +29,31 @@ def register():
     email = data.get('email')
     password = data.get('password')
     role = data.get('role', 'policyholder')
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+    phone_number = data.get('phone_number')
+    address = data.get('address')
     
-    if not all([username, email, password]):
+    if not all([username, email, password, first_name, last_name]):
         return jsonify({'message': 'Missing required fields'}), 400
     
-    user = register_user(username, email, password, role)
+    user = register_user(
+        username=username,
+        email=email,
+        password=password,
+        role=role,
+        first_name=first_name,
+        last_name=last_name,
+        phone_number=phone_number,
+        address=address
+    )
+    
     if not user:
         return jsonify({'message': 'Username or email already exists'}), 400
     
     return jsonify({
         'message': 'User registered successfully',
-        'user': {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email,
-            'role': user.role
-        }
+        'user': user.to_dict()
     }), 201
 
 @users_bp.route('/profile', methods=['GET'])

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../../services/api';
 import './Login.css';
 
 const Login = () => {
@@ -20,7 +21,7 @@ const Login = () => {
     setError(''); // Clear any previous errors
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Demo credentials check
@@ -45,23 +46,31 @@ const Login = () => {
       return;
     }
 
-    // Check for other account types (for demo purposes)
-    if (formData.email && formData.password) {
-      switch(formData.accountType) {
-        case 'Policy Holder':
+    try {
+      // Attempt to authenticate with backend
+      const response = await authService.login(formData.email, formData.password);
+      const { access_token, user } = response.data;
+      
+      // Store the token in localStorage
+      localStorage.setItem('token', access_token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      // Navigate based on user role
+      switch(user.role) {
+        case 'policyholder':
           navigate('/policyholder/dashboard');
           break;
-        case 'Bank Employee':
+        case 'employee':
           navigate('/employee/dashboard');
           break;
-        case 'Admin':
+        case 'admin':
           navigate('/admin/dashboard');
           break;
         default:
-          setError('Invalid account type');
+          setError('Invalid user role');
       }
-    } else {
-      setError('Please enter both email and password');
+    } catch (error) {
+      setError('Invalid credentials. Please try again or use demo credentials.');
     }
   };
 
