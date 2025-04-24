@@ -35,6 +35,12 @@ const AdminLayout = () => {
             >
               System Check
             </NavLink>
+            <NavLink 
+              to="/admin/rl-monitor"
+              className={({ isActive }) => isActive ? 'active' : ''}
+            >
+              RL Monitor
+            </NavLink>
           </nav>
         </div>
         <div className="header-right">

@@ -19,6 +19,7 @@ import BlockchainMonitor from './components/BlockchainMonitor/BlockchainMonitor'
 import Analytics from './components/Analytics.js';
 import LinkedAnalytics from './components/LinkedAnalytics.js';
 import GraphAnalysis from './components/GraphAnalysis';
+import RLMonitor from './components/RLMonitor/RLMonitor';
 import './App.css';
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
             <Route path="manage-users" element={<ManageUsers />} />
             <Route path="blockchain-monitor" element={<BlockchainMonitor />} />
             <Route path="system-check" element={<SystemCheck />} />
+            <Route path="rl-monitor" element={<RLMonitor />} />
             <Route path="profile" element={<MyProfile />} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>

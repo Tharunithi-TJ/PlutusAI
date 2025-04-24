@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 import traceback
 import numpy as np
 from .services.graph_analysis import InsuranceFraudGraph
+from app.services.rl_fraud_service import RLFraudService
+from flask_jwt_extended import jwt_required
 
 main_bp = Blueprint('main', __name__)
 
@@ -19,6 +21,9 @@ document_verifier = DocumentVerifier()
 
 # Initialize the anomaly detector
 anomaly_detector = AnomalyDetector()
+
+# Initialize RL service
+rl_service = RLFraudService()
 
 @main_bp.route("/ping")
 def ping():
@@ -344,4 +349,241 @@ def get_graph_analysis():
         return jsonify({
             'success': False,
             'error': str(e)
-        }), 500 
+        }), 500
+
+@main_bp.route('/claims/<int:claim_id>/analyze', methods=['GET'])
+@jwt_required()
+def analyze_claim(claim_id):
+    try:
+        claim = Claim.query.get_or_404(claim_id)
+        
+        # Prepare claim data with normalized features
+        claim_data = {
+            **claim.to_dict(),
+            'amount_normalized': min(claim.amount / 10000, 1.0) if hasattr(claim, 'amount') else 0.5,
+            'policy_age_normalized': 0.5,  # Calculate based on policy start date
+            'claim_frequency_normalized': 0.5,  # Calculate based on user's claim history
+            'time_since_last_normalized': 0.5,  # Calculate based on last claim date
+            'location_risk_score': 0.5,  # Calculate based on location data
+            'third_party_risk_score': 0.5,  # Calculate based on third party history
+            'document_anomaly_score': 0.5,  # Calculate based on document verification
+            'beneficiary_match_score': 0.5,  # Calculate based on beneficiary data
+            'premium_ratio_normalized': 0.5,  # Calculate based on premium/claim ratio
+            'agent_risk_score': 0.5  # Calculate based on agent history
+        }
+        
+        # Get both traditional and RL analysis
+        traditional_analysis = anomaly_detector.analyze_claim(
+            claim_data,
+            claim.verification_results or []
+        )
+        rl_analysis = rl_service.analyze_claim(claim_data)
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'traditional_analysis': traditional_analysis,
+                'rl_analysis': rl_analysis,
+                'combined_decision': (
+                    rl_analysis['decision'] 
+                    if rl_analysis['confidence'] > 0.7 
+                    else traditional_analysis['verdict']
+                )
+            }
+        })
+    except Exception as e:
+        print(f"Error in analyze_claim: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@main_bp.route('/claims/<int:claim_id>/feedback', methods=['POST'])
+@jwt_required()
+def submit_feedback(claim_id):
+    try:
+        data = request.get_json()
+        was_correct = data.get('was_correct', False)
+        
+        rl_service.log_feedback(claim_id, was_correct)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Feedback recorded successfully'
+        })
+    except Exception as e:
+        print(f"Error in submit_feedback: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@main_bp.route('/api/rl-metrics', methods=['GET'])
+def get_rl_metrics():
+    try:
+        # Get buffer size if available (different implementations may store it differently)
+        buffer_size = 0
+        if hasattr(rl_service.agent, 'replay_buffer'):
+            buffer_size = len(rl_service.agent.replay_buffer)
+        elif hasattr(rl_service.agent, 'rollout_buffer'):
+            buffer_size = len(rl_service.agent.rollout_buffer)
+        
+        # Get training loss safely
+        training_loss = 0.0
+        if hasattr(rl_service.agent, 'logger'):
+            training_loss = rl_service.agent.logger.name_to_value.get('train/loss', 0.0)
+        
+        return jsonify({
+            'success': True,
+            'replay_buffer_size': buffer_size,
+            'last_training_loss': float(training_loss),  # Ensure it's serializable
+            'adaptation_score': float(calculate_adaptation_score())
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@main_bp.route('/api/rl-train', methods=['POST'])
+def train_rl_model():
+    try:
+        rl_service.agent.train(total_timesteps=5000)
+        rl_service.agent.model.save("rl_fraud_model")
+        return jsonify({
+            'success': True,
+            'message': 'Model training completed successfully'
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@main_bp.route('/api/rl-simulate', methods=['POST'])
+def simulate_rl_model():
+    try:
+        # Get some recent claims for simulation
+        claims = Claim.query.order_by(Claim.submitted_at.desc()).limit(10).all()
+        
+        results = []
+        for claim in claims:
+            claim_data = {
+                **claim.to_dict(),
+                'amount_normalized': min(claim.amount / 10000, 1.0) if hasattr(claim, 'amount') else 0.5,
+                'policy_age_normalized': 0.5,
+                'claim_frequency_normalized': 0.5,
+                'time_since_last_normalized': 0.5,
+                'location_risk_score': 0.5,
+                'third_party_risk_score': 0.5,
+                'document_anomaly_score': 0.5,
+                'beneficiary_match_score': 0.5,
+                'premium_ratio_normalized': 0.5,
+                'agent_risk_score': 0.5
+            }
+            
+            # Get both traditional and RL analysis
+            traditional_analysis = anomaly_detector.analyze_claim(
+                claim_data,
+                claim.verification_results or []
+            )
+            rl_analysis = rl_service.analyze_claim(claim_data)
+            
+            results.append({
+                'claim_id': claim.id,
+                'traditional_decision': traditional_analysis.get('verdict', 'unknown'),
+                'rl_decision': rl_analysis['decision'],
+                'confidence': rl_analysis['confidence'],
+                'final_decision': (
+                    rl_analysis['decision'] 
+                    if rl_analysis['confidence'] > 0.7 
+                    else traditional_analysis.get('verdict', 'unknown')
+                )
+            })
+        
+        return jsonify({
+            'success': True,
+            'results': results
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+def calculate_adaptation_score():
+    """Calculate how well the model is adapting to new patterns"""
+    try:
+        # This is a simplified version - you might want to implement a more sophisticated scoring system
+        buffer_size = len(rl_service.agent.model.replay_buffer)
+        loss = rl_service.agent.model.logger.name_to_value.get('train/loss', 0.0)
+        
+        # Higher buffer size and lower loss indicate better adaptation
+        adaptation_score = (buffer_size / 1000) * (1 - min(loss, 1.0))
+        return min(max(adaptation_score, 0.0), 1.0)
+    except:
+        return 0.0
+
+@main_bp.route('/api/rl-simulation', methods=['GET'])
+def get_rl_simulation():
+    try:
+        # Get some recent claims for simulation
+        claims = Claim.query.order_by(Claim.submitted_at.desc()).limit(10).all()
+        
+        results = []
+        for claim in claims:
+            # Convert claim to dictionary and ensure all values are JSON-serializable
+            claim_dict = claim.to_dict()
+            
+            # Prepare normalized features with proper type conversion
+            claim_data = {
+                'amount_normalized': float(min(claim.amount / 10000, 1.0)) if hasattr(claim, 'amount') else 0.5,
+                'policy_age_normalized': 0.5,
+                'claim_frequency_normalized': 0.5,
+                'time_since_last_normalized': 0.5,
+                'location_risk_score': 0.5,
+                'third_party_risk_score': 0.5,
+                'document_anomaly_score': 0.5,
+                'beneficiary_match_score': 0.5,
+                'premium_ratio_normalized': 0.5,
+                'agent_risk_score': 0.5
+            }
+            
+            # Get both traditional and RL analysis
+            traditional_analysis = anomaly_detector.analyze_claim(
+                claim_data,
+                claim.verification_results or []
+            )
+            
+            # Convert any numpy arrays in the observation to lists
+            observation = rl_service._claim_to_observation(claim_data)
+            if isinstance(observation, np.ndarray):
+                observation = observation.tolist()
+                
+            rl_analysis = rl_service.analyze_claim(claim_data)
+            
+            # Ensure all values are JSON-serializable
+            results.append({
+                'claim_id': int(claim.id),
+                'traditional_decision': str(traditional_analysis.get('verdict', 'unknown')),
+                'rl_decision': str(rl_analysis['decision']),
+                'confidence': float(rl_analysis['confidence']),
+                'final_decision': str(
+                    rl_analysis['decision'] 
+                    if rl_analysis['confidence'] > 0.7 
+                    else traditional_analysis.get('verdict', 'unknown')
+                ),
+                'description': str(rl_analysis.get('description', ''))
+            })
+        
+        return jsonify({
+            'success': True,
+            'results': results
+        })
+    except Exception as e:
+        print(f"Error in RL simulation: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500

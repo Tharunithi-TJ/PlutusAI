@@ -20,3 +20,7 @@ tf-keras
 pytesseract
 python-magic
 pytesseract
+stable-baselines3
+sb3-contrib
+gymnasium
+apscheduler
