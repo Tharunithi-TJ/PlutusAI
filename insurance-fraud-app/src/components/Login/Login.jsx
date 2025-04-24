@@ -6,7 +6,6 @@ import './Login.css';
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    accountType: 'Policy Holder',
     email: '',
     password: ''
   });
@@ -25,23 +24,17 @@ const Login = () => {
     e.preventDefault();
     
     // Demo credentials check
-    if (formData.accountType === 'Policy Holder' && 
-        formData.email === 'policyholder@demo.com' && 
-        formData.password === 'demo123') {
+    if (formData.email === 'policyholder@demo.com' && formData.password === 'demo123') {
       navigate('/policyholder/dashboard');
       return;
     }
 
-    if (formData.accountType === 'Bank Employee' && 
-        formData.email === 'employee@demo.com' && 
-        formData.password === 'demo123') {
+    if (formData.email === 'employee@demo.com' && formData.password === 'demo123') {
       navigate('/employee/dashboard');
       return;
     }
 
-    if (formData.accountType === 'Admin' && 
-        formData.email === 'admin@demo.com' && 
-        formData.password === 'demo123') {
+    if (formData.email === 'admin@demo.com' && formData.password === 'demo123') {
       navigate('/admin/dashboard');
       return;
     }
@@ -75,25 +68,10 @@ const Login = () => {
   };
 
   const useDemo = () => {
-    const demoCredentials = {
-      'Policy Holder': {
-        accountType: 'Policy Holder',
-        email: 'policyholder@demo.com',
-        password: 'demo123'
-      },
-      'Bank Employee': {
-        accountType: 'Bank Employee',
-        email: 'employee@demo.com',
-        password: 'demo123'
-      },
-      'Admin': {
-        accountType: 'Admin',
-        email: 'admin@demo.com',
-        password: 'demo123'
-      }
-    };
-    
-    setFormData(demoCredentials[formData.accountType]);
+    setFormData({
+      email: 'policyholder@demo.com',
+      password: 'demo123'
+    });
     setError('');
   };
 
@@ -107,20 +85,6 @@ const Login = () => {
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Account Type</label>
-            <select 
-              name="accountType" 
-              value={formData.accountType}
-              onChange={handleChange}
-              className="form-control"
-            >
-              <option value="Policy Holder">Policy Holder</option>
-              <option value="Bank Employee">Bank Employee</option>
-              <option value="Admin">Admin</option>
-            </select>
-          </div>
-
           <div className="form-group">
             <label>Email address</label>
             <input
