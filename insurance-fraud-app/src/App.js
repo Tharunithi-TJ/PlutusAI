@@ -15,6 +15,8 @@ import VerifyUser from './components/VerifyUser/VerifyUser';
 import ManageUsers from './components/ManageUsers/ManageUsers';
 import SystemCheck from './components/SystemCheck/SystemCheck';
 import MyProfile from './components/MyProfile/MyProfile';
+import Analytics from './components/Analytics';
+import LinkedAnalytics from './components/LinkedAnalytics';
 import './App.css';
 
 function App() {
@@ -39,6 +41,8 @@ function App() {
             <Route path="dashboard" element={<EmployeeDashboard />} />
             <Route path="review-claims" element={<ReviewClaims />} />
             <Route path="verify-user" element={<VerifyUser />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="linked-analytics" element={<LinkedAnalytics />} />
             <Route path="profile" element={<MyProfile />} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>

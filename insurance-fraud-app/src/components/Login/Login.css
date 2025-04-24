@@ -1,37 +1,198 @@
+/* Enhanced Login Page with Hackathon Theme Integration */
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background: linear-gradient(135deg, #E31C79 0%, #4B0082 100%);
+  position: relative;
+  overflow: hidden;
   padding: 20px;
 }
 
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1' fill='rgba(255,255,255,0.1)'/%3E%3C/svg%3E");
+  z-index: 1;
+}
+
+/* Hackathon Banner Integration */
+.hackathon-banner {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 3;
+  color: white;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 2px;
+  font-size: 1.2rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  animation: pulse 2s infinite alternate;
+}
+
+.hackathon-banner span {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-top: 4px;
+  opacity: 0.9;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+}
+
 .login-box {
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
   padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 400px;
   text-align: center;
+  position: relative;
+  z-index: 2;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
+/* Enhanced PlutusAI Logo with Glitter Effect */
 .login-box h1 {
-  color: #333;
-  margin-bottom: 10px;
-  font-size: 2rem;
+  position: relative;
+  color: #E31C79;
+  margin-bottom: 20px;
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #FF1B7B 0%, #FFD700 20%, #7928CA 50%, #FFD700 80%, #4B0082 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-bottom: 10px;
+  display: inline-block;
+  text-shadow: 0 2px 8px rgba(227, 28, 121, 0.3);
+  animation: shine 3s ease-in-out infinite alternate;
 }
 
+@keyframes shine {
+  0% {
+    background-position: 0% 50%;
+    text-shadow: 0 2px 8px rgba(227, 28, 121, 0.3);
+  }
+  50% {
+    background-position: 100% 50%;
+    text-shadow: 0 4px 16px rgba(227, 28, 121, 0.5), 0 0 20px rgba(255, 215, 0, 0.6);
+  }
+  100% {
+    background-position: 0% 50%;
+    text-shadow: 0 2px 8px rgba(227, 28, 121, 0.3), 0 0 30px rgba(255, 215, 0, 0.8);
+  }
+}
+
+.login-box h1::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #FF1B7B 25%, 
+    #FFD700 40%,
+    #7928CA 50%, 
+    #FFD700 60%,
+    #4B0082 75%, 
+    transparent 100%
+  );
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.login-box h1::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 215, 0, 0.3) 0%,
+    transparent 70%
+  );
+  top: 0;
+  left: 0;
+  z-index: -1;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+/* Glitter particles effect */
+.glitter {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.glitter-particle {
+  position: absolute;
+  background: rgba(255, 215, 0, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: glitter-fall linear infinite;
+}
+
+@keyframes glitter-fall {
+  0% {
+    transform: translateY(-100%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Rest of your existing styles with minor enhancements */
 .login-box h2 {
-  color: #333;
+  color: #2D1441;
   margin-bottom: 8px;
   font-size: 1.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .subtitle {
   color: #666;
   margin-bottom: 30px;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 .form-group {
@@ -42,39 +203,78 @@
 .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: #333;
-  font-weight: 500;
+  color: #2D1441;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .form-control {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 14px;
+  border: 2px solid rgba(75, 0, 130, 0.1);
+  border-radius: 12px;
   font-size: 1rem;
-  transition: border-color 0.3s;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #E31C79;
+  box-shadow: 0 0 0 3px rgba(227, 28, 121, 0.2), 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 .sign-in-button {
   width: 100%;
-  padding: 12px;
-  background-color: #6366f1;
+  padding: 16px;
+  background: linear-gradient(135deg, #E31C79 0%, #4B0082 100%);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(227, 28, 121, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
 }
 
 .sign-in-button:hover {
-  background-color: #4f46e5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(227, 28, 121, 0.6);
+  background: linear-gradient(135deg, #FF1B7B 0%, #5C1199 100%);
+}
+
+.sign-in-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  transform: rotate(30deg);
+  animation: button-shine 3s infinite;
+}
+
+@keyframes button-shine {
+  0% {
+    left: -100%;
+  }
+  20% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 .divider {
@@ -90,7 +290,7 @@
   top: 50%;
   width: 45%;
   height: 1px;
-  background-color: #ddd;
+  background: linear-gradient(to right, transparent, rgba(227, 28, 121, 0.4), transparent);
 }
 
 .divider::before {
@@ -102,63 +302,131 @@
 }
 
 .divider span {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 0 10px;
   color: #666;
   font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
 }
 
 .demo-button {
   width: 100%;
-  padding: 12px;
-  background-color: #f3f4f6;
-  color: #333;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 500;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #2D1441;
+  border: 2px solid rgba(227, 28, 121, 0.3);
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .demo-button:hover {
-  background-color: #e5e7eb;
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-color: #E31C79;
 }
 
 .demo-credentials {
   margin-top: 20px;
-  padding: 15px;
-  background-color: #f8fafc;
-  border-radius: 6px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
   font-size: 0.9rem;
   color: #666;
+  border: 2px solid rgba(227, 28, 121, 0.2);
 }
 
 .demo-credentials p {
-  margin: 5px 0;
+  margin: 8px 0;
+  font-weight: 500;
+}
+
+.demo-credentials p:first-child {
+  color: #2D1441;
+  font-weight: 600;
 }
 
 .register-link {
   margin-top: 20px;
   color: #666;
-}
-
-.register-link a {
-  color: #6366f1;
-  text-decoration: none;
   font-weight: 500;
 }
 
+.register-link a {
+  color: #E31C79;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
 .register-link a:hover {
+  color: #4B0082;
   text-decoration: underline;
 }
 
+.register-link a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #E31C79, #4B0082);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.register-link a:hover::after {
+  transform: scaleX(1);
+}
+
 .error-message {
-  background-color: #fee2e2;
+  background-color: rgba(254, 226, 226, 0.95);
   color: #991b1b;
-  padding: 0.75rem;
-  border-radius: 0.375rem;
+  padding: 1rem;
+  border-radius: 12px;
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
   text-align: left;
-} 
+  border: 2px solid rgba(220, 38, 38, 0.3);
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 30px 20px;
+    margin: 0 15px;
+  }
+  
+  .login-box h1 {
+    font-size: 2rem;
+  }
+  
+  .login-box h2 {
+    font-size: 1.25rem;
+  }
+  
+  .sign-in-button,
+  .demo-button {
+    padding: 14px;
+    font-size: 1rem;
+  }
+  
+  .hackathon-banner {
+    font-size: 1rem;
+    top: 10px;
+  }
+}
