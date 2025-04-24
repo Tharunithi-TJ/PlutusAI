@@ -24,6 +24,12 @@ const AdminLayout = () => {
               Manage Users
             </NavLink>
             <NavLink 
+              to="/admin/blockchain-monitor"
+              className={({ isActive }) => isActive ? 'active' : ''}
+            >
+              Blockchain Monitor
+            </NavLink>
+            <NavLink 
               to="/admin/system-check"
               className={({ isActive }) => isActive ? 'active' : ''}
             >

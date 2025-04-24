@@ -15,6 +15,7 @@ import VerifyUser from './components/VerifyUser/VerifyUser';
 import ManageUsers from './components/ManageUsers/ManageUsers';
 import SystemCheck from './components/SystemCheck/SystemCheck';
 import MyProfile from './components/MyProfile/MyProfile';
+import BlockchainMonitor from './components/BlockchainMonitor/BlockchainMonitor';
 import './App.css';
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="manage-users" element={<ManageUsers />} />
+            <Route path="blockchain-monitor" element={<BlockchainMonitor />} />
             <Route path="system-check" element={<SystemCheck />} />
             <Route path="profile" element={<MyProfile />} />
             <Route index element={<Navigate to="dashboard" replace />} />
