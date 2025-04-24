@@ -186,4 +186,65 @@
   .preview-area {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
+}
+
+.verification-results-container {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.verification-result {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background-color: white;
+}
+
+.verification-result h4 {
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.verification-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.metadata-section,
+.analysis-section,
+.forensics-section {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.verification-details h5 {
+  margin: 0 0 0.5rem 0;
+  color: #495057;
+}
+
+.verification-details p {
+  margin: 0.25rem 0;
+  color: #6c757d;
+}
+
+.verification-error {
+  color: #dc3545;
+  padding: 0.5rem;
+  background-color: #f8d7da;
+  border-radius: 4px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.verification-result {
+  animation: fadeIn 0.3s ease-out;
 } 

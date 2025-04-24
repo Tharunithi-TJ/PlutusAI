@@ -12,6 +12,7 @@ const UploadDocuments = () => {
   const [success, setSuccess] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState([]);
+  const [verificationResults, setVerificationResults] = useState([]);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -73,35 +74,92 @@ const UploadDocuments = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setVerificationResults([]);
 
     try {
-      // First upload all documents
-      const uploadPromises = formData.files.map(file => documentService.uploadDocument(file));
-      const uploadResults = await Promise.all(uploadPromises);
+      const formDataObj = new FormData();
+      formDataObj.append('claimType', formData.claimType);
+      formDataObj.append('description', formData.description);
       
-      // Create the claim with document references
-      const claimData = {
-        claim_type: formData.claimType,
-        description: formData.description,
-        documents: uploadResults.map(result => result.data.file_path),
-        claim_date: new Date().toISOString().split('T')[0],
-        amount: 0, // This would typically come from a form field
-        policy_id: 1 // This would typically come from the user's active policy
-      };
-
-      const claimResponse = await claimService.createClaim(claimData);
-      
-      // Use the claim response to show success message with claim ID
-      setSuccess(`Claim #${claimResponse.data.claim_number} submitted successfully!`);
-      setFormData({
-        claimType: 'Medical Claim',
-        description: '',
-        files: []
+      // Append each file to the FormData
+      formData.files.forEach(file => {
+        formDataObj.append('files', file);
       });
-      setPreview([]);
+
+      // Add error handling for the response
+      const response = await fetch('http://localhost:5000/submit-claim', {
+        method: 'POST',
+        body: formDataObj,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Server response:', result); // Add this for debugging
+
+      if (result.status === 'success') {
+        setSuccess(result.message);
+        if (result.data.verification_results) {
+          setVerificationResults(result.data.verification_results);
+        }
+        
+        // Reset form
+        setFormData({
+          claimType: 'Medical Claim',
+          description: '',
+          files: []
+        });
+        setPreview([]);
+      } else {
+        setError(result.message || 'Error submitting claim');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Error submitting claim');
+      console.error('Error details:', err); // Add this for debugging
+      setError('Error submitting claim: ' + (err.message || 'Unknown error'));
     }
+  };
+
+  const renderVerificationResult = (result) => {
+    const getStatusColor = (valid) => valid ? 'green' : 'red';
+    
+    return (
+      <div className="verification-result" key={result.filename}>
+        <h4 style={{ color: getStatusColor(result.verification_result.valid) }}>
+          {result.filename}
+        </h4>
+        
+        {result.verification_result.valid ? (
+          <div className="verification-details">
+            <div className="metadata-section">
+              <h5>Document Metadata</h5>
+              <p>Format: {result.verification_result.metadata.format}</p>
+              <p>Dimensions: {result.verification_result.metadata.width} x {result.verification_result.metadata.height}</p>
+            </div>
+
+            <div className="analysis-section">
+              <h5>Text Analysis</h5>
+              <p>Sentiment: {result.verification_result.text_analysis.sentiment}</p>
+              <p>Confidence: {(result.verification_result.text_analysis.sentiment_score * 100).toFixed(2)}%</p>
+              <p>Word Count: {result.verification_result.text_analysis.word_count}</p>
+            </div>
+
+            {result.verification_result.ela_results && (
+              <div className="forensics-section">
+                <h5>Image Forensics</h5>
+                <p>ELA Mean: {result.verification_result.ela_results.ela_mean.toFixed(2)}</p>
+                <p>ELA Std: {result.verification_result.ela_results.ela_std.toFixed(2)}</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="verification-error">
+            <p>Reason: {result.verification_result.reason}</p>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -192,6 +250,13 @@ const UploadDocuments = () => {
           Submit Claim
         </button>
       </form>
+
+      {verificationResults.length > 0 && (
+        <div className="verification-results-container">
+          <h3>Document Verification Results</h3>
+          {verificationResults.map(result => renderVerificationResult(result))}
+        </div>
+      )}
     </div>
   );
 };

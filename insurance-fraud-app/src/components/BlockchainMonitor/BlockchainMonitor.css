@@ -1,0 +1,90 @@
+.blockchain-monitor {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.blockchain-monitor h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.transactions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.transaction-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.transaction-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.transaction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.transaction-hash {
+  font-family: monospace;
+  color: #3498db;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.transaction-status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.transaction-status.completed {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.transaction-status.pending {
+  background-color: #f1c40f;
+  color: #2c3e50;
+}
+
+.transaction-status.failed {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.transaction-details {
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+.transaction-details p {
+  margin: 5px 0;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+}
+
+.error {
+  text-align: center;
+  padding: 40px;
+  color: #e74c3c;
+  background-color: #fde8e8;
+  border-radius: 8px;
+} 

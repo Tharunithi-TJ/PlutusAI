@@ -1,3 +1,5 @@
+@import '../../styles/theme.css';
+
 .review-claims {
   max-width: 1200px;
   margin: 0 auto;
@@ -177,4 +179,431 @@
 
 .close-button:hover {
   color: #333;
+}
+
+.review-claims-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.review-claims-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.review-claims-header h2 {
+    color: var(--primary-color);
+    font-size: 1.875rem;
+    font-weight: 600;
+}
+
+.filters-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-item label {
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+}
+
+.filter-item select {
+    padding: 0.5rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    background-color: white;
+    color: var(--gray-800);
+}
+
+.claims-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.claim-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.claim-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.claim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.claim-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.claim-title h3 {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-badge.pending {
+    background-color: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.status-badge.approved {
+    background-color: #C6F6D5;
+    color: var(--success-color);
+}
+
+.status-badge.rejected {
+    background-color: #FED7D7;
+    color: var(--danger-color);
+}
+
+.claim-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-label {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    margin-bottom: 0.25rem;
+}
+
+.detail-value {
+    font-size: 1rem;
+    color: var(--gray-900);
+    font-weight: 500;
+}
+
+.documents-section {
+    background: var(--gray-50);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.document-item {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    border: 1px solid var(--gray-200);
+}
+
+.anomaly-results {
+    margin-top: 1.5rem;
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    border: 1px solid var(--gray-200);
+}
+
+.risk-score {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--gray-50);
+    border-radius: var(--radius-md);
+    margin: 1rem 0;
+}
+
+.risk-score .score {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.risk-score .level {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.claim-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.review-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.review-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.anomaly-btn {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.anomaly-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.anomaly-btn.analyzing {
+    background-color: var(--gray-400);
+    cursor: not-allowed;
+}
+
+/* Review Modal Styles */
+.review-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.review-modal {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.review-modal h3 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+.form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    resize: vertical;
+    min-height: 100px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.error {
+    color: #721c24;
+    background: #f8d7da;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.verification-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.verification-status {
+    margin-bottom: 10px;
+}
+
+.status-indicator {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.status-indicator.valid {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-indicator.invalid {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.metadata-section,
+.analysis-section,
+.forensics-section {
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.metadata-section h5,
+.analysis-section h5,
+.forensics-section h5 {
+    margin: 0 0 8px 0;
+    color: #495057;
+    font-size: 0.9em;
+}
+
+.metadata-section p,
+.analysis-section p,
+.forensics-section p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.review-notes {
+    margin-bottom: 20px;
+}
+
+.review-notes textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+.review-notes-display {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.review-timestamp {
+    font-size: 0.9em;
+    color: #6c757d;
+    margin-top: 10px;
+}
+
+.anomaly-btn {
+    background: #6610f2;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.anomaly-btn.analyzing {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.anomaly-results {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.risk-factors {
+    margin-top: 15px;
+    background: white;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.risk-factors ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 } 

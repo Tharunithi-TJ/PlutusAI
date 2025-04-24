@@ -1,8 +1,10 @@
 from app import create_app, db
 from app.models.claims import Claim
+from datetime import datetime
 
 def init_db():
     app = create_app()
+    
     with app.app_context():
         print("Dropping all tables...")
         db.drop_all()
@@ -15,14 +17,28 @@ def init_db():
             claim_type="Test Claim",
             description="This is a test claim",
             status="pending",
+            submitted_at=datetime.utcnow(),
             files=["test_file.pdf"],
             verification_results=[{
                 "filename": "test_file.pdf",
                 "verification_result": {
                     "valid": True,
-                    "metadata": {"format": "PDF"}
+                    "metadata": {
+                        "format": "PDF",
+                        "size": [612, 792],
+                        "mode": "RGB"
+                    },
+                    "text_analysis": {
+                        "sentiment": "neutral",
+                        "sentiment_score": 0.75,
+                        "word_count": 100,
+                        "line_count": 10
+                    }
                 }
-            }]
+            }],
+            review_notes=None,
+            reviewed_at=None,
+            reviewed_by=None
         )
         
         try:
