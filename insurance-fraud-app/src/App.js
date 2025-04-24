@@ -16,6 +16,8 @@ import ManageUsers from './components/ManageUsers/ManageUsers';
 import SystemCheck from './components/SystemCheck/SystemCheck';
 import MyProfile from './components/MyProfile/MyProfile';
 import BlockchainMonitor from './components/BlockchainMonitor/BlockchainMonitor';
+import Analytics from './components/Analytics.js';
+import LinkedAnalytics from './components/LinkedAnalytics.js';
 import './App.css';
 
 function App() {
