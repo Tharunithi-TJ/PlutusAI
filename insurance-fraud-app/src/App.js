@@ -18,6 +18,7 @@ import MyProfile from './components/MyProfile/MyProfile';
 import BlockchainMonitor from './components/BlockchainMonitor/BlockchainMonitor';
 import Analytics from './components/Analytics.js';
 import LinkedAnalytics from './components/LinkedAnalytics.js';
+import GraphAnalysis from './components/GraphAnalysis';
 import './App.css';
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
             <Route path="verify-user" element={<VerifyUser />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="linked-analytics" element={<LinkedAnalytics />} />
+            <Route path="graph-analysis" element={<GraphAnalysis />} />
             <Route path="profile" element={<MyProfile />} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>

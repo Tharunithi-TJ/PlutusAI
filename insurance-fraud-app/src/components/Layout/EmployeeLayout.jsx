@@ -41,6 +41,12 @@ const EmployeeLayout = () => {
             >
               Linked Analytics
             </NavLink>
+            <NavLink 
+              to="/employee/graph-analysis"
+              className={({ isActive }) => isActive ? 'active' : ''}
+            >
+              Graph Analysis
+            </NavLink>
           </nav>
         </div>
         <div className="header-right">

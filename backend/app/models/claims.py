@@ -14,14 +14,20 @@ class Claim(db.Model):
     verification_results = db.Column(db.JSON, nullable=True)
     files = db.Column(db.JSON, nullable=True)  # Will store array of file paths
     
-    # Foreign keys (optional for now)
-    user_id = db.Column(db.Integer, nullable=True)
-    policy_id = db.Column(db.Integer, nullable=True)
+    # Foreign keys
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    policy_id = db.Column(db.Integer, db.ForeignKey('policies.id'), nullable=True)
+    reviewed_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # New fields for review
     review_notes = db.Column(db.Text, nullable=True)
     reviewed_at = db.Column(db.DateTime, nullable=True)
-    reviewed_by = db.Column(db.Integer, nullable=True)  # Employee ID who reviewed
+    reviewed_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Employee ID who reviewed
+
+    # Relationships
+    claimant = db.relationship('User', foreign_keys=[user_id], back_populates='submitted_claims')
+    reviewer = db.relationship('User', foreign_keys=[reviewed_by], back_populates='reviewed_claims')
+    policy = db.relationship('Policy', back_populates='claims')
 
     def to_dict(self):
         return {
@@ -34,5 +40,7 @@ class Claim(db.Model):
             'files': self.files or [],
             'review_notes': self.review_notes,
             'reviewed_at': self.reviewed_at.isoformat() if self.reviewed_at else None,
-            'reviewed_by': self.reviewed_by
+            'reviewed_by': self.reviewed_by,
+            'user_id': self.user_id,
+            'policy_id': self.policy_id
         } 

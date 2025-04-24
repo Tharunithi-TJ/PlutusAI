@@ -13,7 +13,20 @@ class Policy(BaseModel):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     
     # Relationships
-    claims = db.relationship('Claim', backref='policy', lazy=True)
+    user = db.relationship('User', back_populates='policies')
+    claims = db.relationship('Claim', back_populates='policy', cascade='all, delete-orphan')
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'policy_number': self.policy_number,
+            'policy_type': self.policy_type,
+            'start_date': self.start_date.isoformat(),
+            'end_date': self.end_date.isoformat(),
+            'premium_amount': self.premium_amount,
+            'status': self.status,
+            'user_id': self.user_id
+        }
     
     def __repr__(self):
         return f'<Policy {self.policy_number}>' 

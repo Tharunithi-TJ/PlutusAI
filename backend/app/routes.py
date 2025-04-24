@@ -7,6 +7,7 @@ import os
 from datetime import datetime, timedelta
 import traceback
 import numpy as np
+from .services.graph_analysis import InsuranceFraudGraph
 
 main_bp = Blueprint('main', __name__)
 
@@ -320,4 +321,27 @@ def analyze_documents(verification_results):
             'anomalies': anomalies
         })
 
-    return document_anomalies 
+    return document_anomalies
+
+@main_bp.route('/graph-analysis', methods=['GET'])
+def get_graph_analysis():
+    try:
+        fraud_graph = InsuranceFraudGraph()
+        fraud_graph.build_graph_from_db()
+        
+        # Get both graph data and suspicious patterns
+        graph_data = fraud_graph.get_graph_data()
+        suspicious_patterns = fraud_graph.detect_suspicious_patterns()
+        
+        return jsonify({
+            'success': True,
+            'graph_data': graph_data,
+            'suspicious_patterns': suspicious_patterns
+        })
+    except Exception as e:
+        print(f"Error in graph analysis: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500 

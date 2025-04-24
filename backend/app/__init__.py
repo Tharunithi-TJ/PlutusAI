@@ -22,8 +22,10 @@ def create_app():
     db.init_app(app)
     
     with app.app_context():
-        # Import models
+        # Import all models
         from app.models.claims import Claim
+        from app.models.policies import Policy
+        from app.models.users import User
         
         # Create all tables
         db.create_all()

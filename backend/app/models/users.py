@@ -16,8 +16,9 @@ class User(BaseModel):
     address = db.Column(db.Text)
     
     # Relationships
-    policies = db.relationship('Policy', backref='user', lazy=True)
-    claims = db.relationship('Claim', backref='user', lazy=True)
+    policies = db.relationship('Policy', back_populates='user', cascade='all, delete-orphan')
+    submitted_claims = db.relationship('Claim', back_populates='claimant', foreign_keys='Claim.user_id')
+    reviewed_claims = db.relationship('Claim', back_populates='reviewer', foreign_keys='Claim.reviewed_by')
     
     @property
     def password(self):
