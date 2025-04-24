@@ -27,11 +27,13 @@ def create_app():
     from app.routes.policies import policies_bp
     from app.routes.claims import claims_bp
     from app.routes.documents import documents_bp
+    from app.routes.ai_routes import ai_bp
     
     app.register_blueprint(users_bp, url_prefix='/api/users')
     app.register_blueprint(policies_bp, url_prefix='/api/policies')
     app.register_blueprint(claims_bp, url_prefix='/api/claims')
     app.register_blueprint(documents_bp, url_prefix='/api/documents')
+    app.register_blueprint(ai_bp, url_prefix='/api/ai')
     
     # Create tables
     with app.app_context():

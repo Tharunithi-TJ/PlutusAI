@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './ReviewClaims.css';
+import ClaimAnalysis from '../ClaimAnalysis';
 
 const ReviewClaims = () => {
+  const [selectedClaim, setSelectedClaim] = useState(null);
+  const [showAnalysis, setShowAnalysis] = useState(false);
+
   const claims = [
     {
       id: 'CLM-001',
@@ -41,6 +45,11 @@ const ReviewClaims = () => {
 
   const handleViewDocument = (document) => {
     console.log('Viewing document:', document);
+  };
+
+  const handleAnalyzeClaim = (claimId) => {
+    setSelectedClaim(claimId);
+    setShowAnalysis(true);
   };
 
   return (
@@ -85,6 +94,12 @@ const ReviewClaims = () => {
                 </td>
                 <td className="actions-cell">
                   <button
+                    className="action-button analyze"
+                    onClick={() => handleAnalyzeClaim(claim.id)}
+                  >
+                    🔍 Analyze
+                  </button>
+                  <button
                     className="action-button verify"
                     onClick={() => handleVerify(claim.id)}
                   >
@@ -108,6 +123,20 @@ const ReviewClaims = () => {
           </tbody>
         </table>
       </div>
+
+      {showAnalysis && selectedClaim && (
+        <div className="analysis-modal">
+          <div className="analysis-content">
+            <button 
+              className="close-button"
+              onClick={() => setShowAnalysis(false)}
+            >
+              ×
+            </button>
+            <ClaimAnalysis claimId={selectedClaim} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

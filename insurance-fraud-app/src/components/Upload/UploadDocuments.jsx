@@ -91,7 +91,8 @@ const UploadDocuments = () => {
 
       const claimResponse = await claimService.createClaim(claimData);
       
-      setSuccess('Claim submitted successfully!');
+      // Use the claim response to show success message with claim ID
+      setSuccess(`Claim #${claimResponse.data.claim_number} submitted successfully!`);
       setFormData({
         claimType: 'Medical Claim',
         description: '',
@@ -99,88 +100,91 @@ const UploadDocuments = () => {
       });
       setPreview([]);
     } catch (err) {
-      console.error('Error submitting claim:', err);
-      setError(err.response?.data?.message || 'Failed to submit claim. Please try again.');
+      setError(err.response?.data?.message || 'Error submitting claim');
     }
   };
 
   return (
     <div className="upload-container">
-      <h1>Upload Claim Documents</h1>
-
+      <h2>Upload Claim Documents</h2>
+      
       {error && <div className="error-message">{error}</div>}
       {success && <div className="success-message">{success}</div>}
-
+      
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>Claim Type</label>
+          <label htmlFor="claimType">Claim Type</label>
           <select
+            id="claimType"
             value={formData.claimType}
-            onChange={(e) => setFormData(prev => ({ ...prev, claimType: e.target.value }))}
-            className="form-control"
+            onChange={(e) => setFormData({ ...formData, claimType: e.target.value })}
           >
             <option value="Medical Claim">Medical Claim</option>
-            <option value="Auto Insurance">Auto Insurance</option>
-            <option value="Property Damage">Property Damage</option>
+            <option value="Auto Claim">Auto Claim</option>
+            <option value="Property Claim">Property Claim</option>
           </select>
         </div>
 
         <div className="form-group">
-          <label>Description</label>
+          <label htmlFor="description">Description</label>
           <textarea
+            id="description"
             value={formData.description}
-            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-            placeholder="Brief description of the claim"
-            className="form-control"
-            rows="3"
-            required
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            placeholder="Describe your claim..."
           />
         </div>
 
-        <div className="form-group">
-          <label>Upload Documents</label>
-          <div 
-            className={`upload-area ${dragActive ? 'drag-active' : ''}`}
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-          >
-            <input
-              type="file"
-              id="file-input"
-              multiple
-              accept=".pdf,.jpg,.jpeg,.png"
-              onChange={handleFileInput}
-              className="file-input"
-            />
-            <div className="upload-prompt">
-              <div className="upload-icon">📄</div>
-              <p>Click to upload or drag and drop</p>
-              <p className="upload-hint">PDF, PNG, JPG (MAX. 10MB)</p>
-            </div>
-          </div>
+        <div
+          className={`drop-zone ${dragActive ? 'active' : ''}`}
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+        >
+          <input
+            type="file"
+            id="file-input"
+            multiple
+            onChange={handleFileInput}
+            accept=".pdf,.jpg,.jpeg,.png"
+            style={{ display: 'none' }}
+          />
+          <label htmlFor="file-input" className="drop-zone-label">
+            Drag & drop files here or click to browse
+          </label>
+          <p className="drop-zone-info">
+            Supported formats: PDF, JPG, PNG (max 10MB each)
+          </p>
         </div>
 
         {preview.length > 0 && (
-          <div className="preview-area">
-            {preview.map((file, index) => (
-              <div key={index} className="preview-item">
-                {file.type === 'pdf' ? (
-                  <div className="pdf-preview">PDF</div>
-                ) : (
-                  <img src={file.url} alt={file.name} className="image-preview" />
-                )}
-                <p className="file-name">{file.name}</p>
-                <button 
-                  type="button" 
-                  className="remove-file"
-                  onClick={() => removeFile(index)}
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+          <div className="preview-container">
+            <h3>Selected Files</h3>
+            <div className="preview-list">
+              {preview.map((file, index) => (
+                <div key={index} className="preview-item">
+                  {file.type === 'pdf' ? (
+                    <div className="pdf-preview">
+                      <span>📄</span>
+                      <span>{file.name}</span>
+                    </div>
+                  ) : (
+                    <div className="image-preview">
+                      <img src={file.url} alt={file.name} />
+                      <span>{file.name}</span>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    className="remove-button"
+                    onClick={() => removeFile(index)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

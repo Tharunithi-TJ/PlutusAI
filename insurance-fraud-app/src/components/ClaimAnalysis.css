@@ -1,0 +1,82 @@
+.claim-analysis {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  margin: 20px 0;
+}
+
+.claim-analysis h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.risk-level {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.risk-level.high-risk {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.risk-level.low-risk {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.metric {
+  background-color: white;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.metric .label {
+  display: block;
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+
+.metric .value {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+}
+
+.alert {
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 15px;
+}
+
+.alert-warning {
+  background-color: #fff3e0;
+  color: #e65100;
+  border-left: 4px solid #ff9800;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.error {
+  text-align: center;
+  padding: 20px;
+  color: #c62828;
+  background-color: #ffebee;
+  border-radius: 4px;
+} 
