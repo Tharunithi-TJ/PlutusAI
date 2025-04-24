@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ReviewClaims.css';
 import ClaimAnalysis from '../ClaimAnalysis';
+import ClaimVisualization from './ClaimVisualization';
 
 const ReviewClaims = () => {
   const [claims, setClaims] = useState([]);
@@ -12,6 +13,8 @@ const ReviewClaims = () => {
   });
   const [selectedClaim, setSelectedClaim] = useState(null);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showVisualization, setShowVisualization] = useState(false);
+  const [visualizationClaim, setVisualizationClaim] = useState(null);
   const [reviewData, setReviewData] = useState({
     claimId: null,
     notes: '',
@@ -204,6 +207,16 @@ const ReviewClaims = () => {
     } finally {
       setAnalyzing(prev => ({ ...prev, [claimId]: false }));
     }
+  };
+
+  const handleShowVisualization = (claim) => {
+    setVisualizationClaim(claim);
+    setShowVisualization(true);
+  };
+
+  const handleCloseVisualization = () => {
+    setShowVisualization(false);
+    setVisualizationClaim(null);
   };
 
   const ReviewModal = ({ claim, onClose }) => (
@@ -421,6 +434,12 @@ const ReviewClaims = () => {
                   >
                     {analyzing[claim.id] ? 'Analyzing...' : 'Check Anomalies'}
                   </button>
+                  <button
+                    className="action-button visualize"
+                    onClick={() => handleShowVisualization(claim)}
+                  >
+                    Show Visualization
+                  </button>
                 </>
               )}
             </div>
@@ -450,6 +469,14 @@ const ReviewClaims = () => {
         <ReviewModal 
           claim={claims.find(c => c.id === reviewData.claimId)}
           onClose={() => setReviewData({ claimId: null, notes: '', showModal: false })}
+        />
+      )}
+
+      {showVisualization && visualizationClaim && (
+        <ClaimVisualization
+          claim={visualizationClaim}
+          onClose={handleCloseVisualization}
+          anomalyResults={anomalyResults}
         />
       )}
     </div>

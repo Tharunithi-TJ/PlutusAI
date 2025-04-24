@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { documentService, claimService } from '../../services/api';
 import './UploadDocuments.css';
+import DocumentVerification from './DocumentVerification';
 
 const UploadDocuments = () => {
   const [formData, setFormData] = useState({
@@ -121,47 +122,6 @@ const UploadDocuments = () => {
     }
   };
 
-  const renderVerificationResult = (result) => {
-    const getStatusColor = (valid) => valid ? 'green' : 'red';
-    
-    return (
-      <div className="verification-result" key={result.filename}>
-        <h4 style={{ color: getStatusColor(result.verification_result.valid) }}>
-          {result.filename}
-        </h4>
-        
-        {result.verification_result.valid ? (
-          <div className="verification-details">
-            <div className="metadata-section">
-              <h5>Document Metadata</h5>
-              <p>Format: {result.verification_result.metadata.format}</p>
-              <p>Dimensions: {result.verification_result.metadata.width} x {result.verification_result.metadata.height}</p>
-            </div>
-
-            <div className="analysis-section">
-              <h5>Text Analysis</h5>
-              <p>Sentiment: {result.verification_result.text_analysis.sentiment}</p>
-              <p>Confidence: {(result.verification_result.text_analysis.sentiment_score * 100).toFixed(2)}%</p>
-              <p>Word Count: {result.verification_result.text_analysis.word_count}</p>
-            </div>
-
-            {result.verification_result.ela_results && (
-              <div className="forensics-section">
-                <h5>Image Forensics</h5>
-                <p>ELA Mean: {result.verification_result.ela_results.ela_mean.toFixed(2)}</p>
-                <p>ELA Std: {result.verification_result.ela_results.ela_std.toFixed(2)}</p>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="verification-error">
-            <p>Reason: {result.verification_result.reason}</p>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="upload-container">
       <h2>Upload Claim Documents</h2>
@@ -169,17 +129,18 @@ const UploadDocuments = () => {
       {error && <div className="error-message">{error}</div>}
       {success && <div className="success-message">{success}</div>}
       
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="upload-form">
         <div className="form-group">
           <label htmlFor="claimType">Claim Type</label>
           <select
             id="claimType"
+            name="claimType"
             value={formData.claimType}
-            onChange={(e) => setFormData({ ...formData, claimType: e.target.value })}
+            onChange={(e) => setFormData(prev => ({ ...prev, claimType: e.target.value }))}
           >
             <option value="Medical Claim">Medical Claim</option>
-            <option value="Auto Claim">Auto Claim</option>
             <option value="Property Claim">Property Claim</option>
+            <option value="Liability Claim">Liability Claim</option>
           </select>
         </div>
 
@@ -187,13 +148,14 @@ const UploadDocuments = () => {
           <label htmlFor="description">Description</label>
           <textarea
             id="description"
+            name="description"
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
             placeholder="Describe your claim..."
           />
         </div>
 
-        <div
+        <div 
           className={`drop-zone ${dragActive ? 'active' : ''}`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
@@ -202,18 +164,23 @@ const UploadDocuments = () => {
         >
           <input
             type="file"
-            id="file-input"
+            id="fileInput"
             multiple
             onChange={handleFileInput}
             accept=".pdf,.jpg,.jpeg,.png"
             style={{ display: 'none' }}
           />
-          <label htmlFor="file-input" className="drop-zone-label">
-            Drag & drop files here or click to browse
+          <label htmlFor="fileInput" className="drop-zone-label">
+            <div className="upload-icon">
+              <i className="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div className="upload-text">
+              Drag & drop files here or click to browse
+              <div className="upload-hint">
+                Supported formats: PDF, JPG, PNG (max 10MB each)
+              </div>
+            </div>
           </label>
-          <p className="drop-zone-info">
-            Supported formats: PDF, JPG, PNG (max 10MB each)
-          </p>
         </div>
 
         {preview.length > 0 && (
@@ -254,7 +221,9 @@ const UploadDocuments = () => {
       {verificationResults.length > 0 && (
         <div className="verification-results-container">
           <h3>Document Verification Results</h3>
-          {verificationResults.map(result => renderVerificationResult(result))}
+          {verificationResults.map((result, index) => (
+            <DocumentVerification key={index} result={result} />
+          ))}
         </div>
       )}
     </div>

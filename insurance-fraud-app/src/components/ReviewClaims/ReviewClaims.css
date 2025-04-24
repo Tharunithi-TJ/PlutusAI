@@ -131,6 +131,25 @@
   background-color: #fecaca;
 }
 
+.action-button.visualize {
+  background-color: #9b59b6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.action-button.visualize:hover {
+  background-color: #8e44ad;
+}
+
+.action-button.visualize:active {
+  transform: translateY(1px);
+}
+
 @media (max-width: 768px) {
   .review-claims {
     padding: 1rem;
