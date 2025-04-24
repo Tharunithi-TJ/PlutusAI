@@ -1,42 +1,35 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 import os
 
+# Initialize SQLAlchemy
 db = SQLAlchemy()
-migrate = Migrate()
-jwt = JWTManager()
-cors = CORS()
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     
-    # Load configuration
-    app.config.from_object('app.utils.config.Config')
+    # Ensure the instance folder exists
+    os.makedirs(os.path.join(app.root_path, 'instance'), exist_ok=True)
+    
+    # Database configuration
+    db_path = os.path.join(app.root_path, 'instance', 'app.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     # Initialize extensions
     db.init_app(app)
-    migrate.init_app(app, db)
-    jwt.init_app(app)
-    cors.init_app(app)
     
-    # Register blueprints
-    from app.routes.users import users_bp
-    from app.routes.policies import policies_bp
-    from app.routes.claims import claims_bp
-    from app.routes.documents import documents_bp
-    from app.routes.ai_routes import ai_bp
-    
-    app.register_blueprint(users_bp, url_prefix='/api/users')
-    app.register_blueprint(policies_bp, url_prefix='/api/policies')
-    app.register_blueprint(claims_bp, url_prefix='/api/claims')
-    app.register_blueprint(documents_bp, url_prefix='/api/documents')
-    app.register_blueprint(ai_bp, url_prefix='/api/ai')
-    
-    # Create tables
     with app.app_context():
+        # Import models
+        from app.models.claims import Claim
+        
+        # Create all tables
         db.create_all()
+        
+        # Import and register blueprints
+        from app.routes import main_bp
+        app.register_blueprint(main_bp)
     
     return app 

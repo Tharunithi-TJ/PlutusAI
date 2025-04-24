@@ -158,4 +158,163 @@
 
 .table-container::-webkit-scrollbar-thumb:hover {
   background: #a0a0a0;
+}
+
+.status-tracker-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.claims-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.claim-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.claim-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.claim-card.selected {
+    border: 2px solid #007bff;
+}
+
+.claim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.claim-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.claim-title h3 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #2c3e50;
+}
+
+.status-indicator {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: white;
+}
+
+.claim-date {
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.claim-summary {
+    margin-bottom: 15px;
+}
+
+.claim-summary p {
+    margin: 5px 0;
+    color: #495057;
+}
+
+.claim-details {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+}
+
+.documents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.document-item {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+}
+
+.document-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.document-icon {
+    font-size: 1.2em;
+}
+
+.document-name {
+    flex-grow: 1;
+    font-weight: 500;
+    color: #495057;
+}
+
+.verification-icon {
+    font-size: 1.2em;
+}
+
+.document-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.detail-section {
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.detail-section h5 {
+    margin: 0 0 8px 0;
+    color: #495057;
+    font-size: 0.9em;
+}
+
+.detail-section p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+.error-message {
+    color: #dc3545;
+    padding: 10px;
+    background: #f8d7da;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+}
+
+.error {
+    color: #721c24;
+    background: #f8d7da;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 20px 0;
 } 

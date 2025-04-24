@@ -1,89 +1,164 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './StatusTracker.css';
 
 const StatusTracker = () => {
-  const claims = [
-    {
-      id: 'CLM-001',
-      date: '2024-03-15',
-      type: 'Medical Claim',
-      status: 'Pending',
-      riskScore: '15%'
-    },
-    {
-      id: 'CLM-002',
-      date: '2024-03-10',
-      type: 'Auto Insurance',
-      status: 'Approved',
-      riskScore: '5%'
-    },
-    {
-      id: 'CLM-003',
-      date: '2024-03-05',
-      type: 'Property Damage',
-      status: 'Suspicious',
-      riskScore: '75%'
-    }
-  ];
+    const [claims, setClaims] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [selectedClaim, setSelectedClaim] = useState(null);
 
-  const getStatusClass = (status) => {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return 'status-pending';
-      case 'approved':
-        return 'status-approved';
-      case 'suspicious':
-        return 'status-suspicious';
-      default:
-        return '';
-    }
-  };
+    useEffect(() => {
+        fetchUserClaims();
+    }, []);
 
-  const getRiskClass = (score) => {
-    const numericScore = parseInt(score);
-    if (numericScore <= 20) return 'risk-low';
-    if (numericScore <= 50) return 'risk-medium';
-    return 'risk-high';
-  };
+    const fetchUserClaims = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch('http://localhost:5000/claims');
+            const data = await response.json();
 
-  return (
-    <div className="status-tracker">
-      <h1>Claim Status Tracker</h1>
+            if (data.status === 'success') {
+                setClaims(data.data.claims);
+            } else {
+                throw new Error(data.message || 'Failed to fetch claims');
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      <div className="table-container">
-        <table className="claims-table">
-          <thead>
-            <tr>
-              <th>CLAIM ID</th>
-              <th>DATE</th>
-              <th>TYPE</th>
-              <th>STATUS</th>
-              <th>RISK SCORE</th>
-            </tr>
-          </thead>
-          <tbody>
-            {claims.map((claim) => (
-              <tr key={claim.id}>
-                <td>{claim.id}</td>
-                <td>{new Date(claim.date).toLocaleDateString()}</td>
-                <td>{claim.type}</td>
-                <td>
-                  <span className={`status-badge ${getStatusClass(claim.status)}`}>
-                    {claim.status}
-                  </span>
-                </td>
-                <td>
-                  <span className={`risk-score ${getRiskClass(claim.riskScore)}`}>
-                    {claim.riskScore}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    const formatDateTime = (dateString) => {
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        };
+        return new Date(dateString).toLocaleString('en-US', options);
+    };
+
+    const getStatusColor = (status) => {
+        switch (status.toLowerCase()) {
+            case 'approved':
+                return '#28a745';
+            case 'rejected':
+                return '#dc3545';
+            case 'pending':
+                return '#ffc107';
+            default:
+                return '#6c757d';
+        }
+    };
+
+    const getVerificationStatusIcon = (isValid) => {
+        return isValid ? 
+            '✅' : // Green checkmark for valid
+            '❌'; // Red X for invalid
+    };
+
+    const renderDocumentDetails = (verificationResults) => {
+        if (!verificationResults || verificationResults.length === 0) {
+            return <p>No documents available</p>;
+        }
+
+        return (
+            <div className="documents-list">
+                {verificationResults.map((doc, index) => (
+                    <div key={index} className="document-item">
+                        <div className="document-header">
+                            <span className="document-icon">📄</span>
+                            <span className="document-name">{doc.filename}</span>
+                            <span className="verification-icon">
+                                {getVerificationStatusIcon(doc.verification_result.valid)}
+                            </span>
+                        </div>
+                        
+                        <div className="document-details">
+                            {doc.verification_result.valid ? (
+                                <>
+                                    {doc.verification_result.metadata && (
+                                        <div className="detail-section">
+                                            <h5>Document Info</h5>
+                                            <p>Format: {doc.verification_result.metadata.format}</p>
+                                            {doc.verification_result.metadata.width && (
+                                                <p>Size: {doc.verification_result.metadata.width} x {doc.verification_result.metadata.height}</p>
+                                            )}
+                                        </div>
+                                    )}
+                                    
+                                    {doc.verification_result.text_analysis && (
+                                        <div className="detail-section">
+                                            <h5>Content Analysis</h5>
+                                            <p>Words: {doc.verification_result.text_analysis.word_count}</p>
+                                            <p>Sentiment: {doc.verification_result.text_analysis.sentiment}</p>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="error-message">
+                                    {doc.verification_result.reason}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
+    if (loading) return <div className="loading">Loading your claims...</div>;
+    if (error) return <div className="error">Error: {error}</div>;
+
+    return (
+        <div className="status-tracker-container">
+            <h2>Claim Status Tracker</h2>
+            
+            <div className="claims-timeline">
+                {claims.length === 0 ? (
+                    <p>No claims found</p>
+                ) : (
+                    claims.map(claim => (
+                        <div 
+                            key={claim.id} 
+                            className={`claim-card ${selectedClaim === claim.id ? 'selected' : ''}`}
+                            onClick={() => setSelectedClaim(selectedClaim === claim.id ? null : claim.id)}
+                        >
+                            <div className="claim-header">
+                                <div className="claim-title">
+                                    <h3>Claim #{claim.id}</h3>
+                                    <span 
+                                        className="status-indicator"
+                                        style={{ backgroundColor: getStatusColor(claim.status) }}
+                                    >
+                                        {claim.status}
+                                    </span>
+                                </div>
+                                <div className="claim-date">
+                                    {formatDateTime(claim.submitted_at)}
+                                </div>
+                            </div>
+
+                            <div className="claim-summary">
+                                <p><strong>Type:</strong> {claim.claim_type}</p>
+                                <p><strong>Description:</strong> {claim.description}</p>
+                            </div>
+
+                            {selectedClaim === claim.id && (
+                                <div className="claim-details">
+                                    <h4>Submitted Documents</h4>
+                                    {renderDocumentDetails(claim.verification_results)}
+                                </div>
+                            )}
+                        </div>
+                    ))
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default StatusTracker; 
