@@ -5,16 +5,16 @@ const ManageUsers = () => {
   const users = [
     {
       id: 'JD',
-      name: 'John Doe',
-      email: 'john@example.com',
+      name: 'Tharunithi TJ',
+      email: 'tharunithitj@gmail.com',
       role: 'employee',
       status: 'Active',
       lastLogin: '2024-03-15'
     },
     {
       id: 'JS',
-      name: 'Jane Smith',
-      email: 'jane@example.com',
+      name: 'Sundaresh Karthic G',
+      email: 'sundareshkarthic@gmail.com',
       role: 'policyholder',
       status: 'Active',
       lastLogin: '2024-03-14'

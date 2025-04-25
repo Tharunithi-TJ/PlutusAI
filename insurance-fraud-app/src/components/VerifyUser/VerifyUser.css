@@ -2,6 +2,8 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
 }
 
 .verify-user h1 {
@@ -12,52 +14,62 @@
 }
 
 .verify-container {
-  background: #fff;
+  background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.user-info-section,
-.document-verification-section {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   padding: 2rem;
 }
 
 .user-info-section {
-  background: linear-gradient(to right, #f8f9fa, #e9ecef);
-  border-bottom: 1px solid #dee2e6;
-}
-
-.user-info-section h2,
-.document-verification-section h2 {
-  color: #2c3e50;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
+  margin-bottom: 3rem;
 }
 
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .info-item {
-  background: white;
-  padding: 1rem;
+  background: #ffffff;
+  padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.info-item:hover {
+  transform: translateY(-2px);
 }
 
 .info-item label {
   display: block;
-  color: #6c757d;
-  font-size: 0.9rem;
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .info-value {
-  color: #2c3e50;
+  color: #1e293b;
+  font-size: 1rem;
   font-weight: 500;
+}
+
+h2 {
+  color: #0f172a;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.document-verification-section {
+  margin-top: 2rem;
 }
 
 .documents-list {
@@ -66,44 +78,53 @@
 }
 
 .document-item {
-  background: white;
-  border: 1px solid #e9ecef;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .document-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.document-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .document-info h3 {
-  color: #2c3e50;
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
+  color: #0f172a;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
 }
 
 .filename {
-  color: #6c757d;
-  margin: 0 0 0.5rem 0;
-  font-size: 0.9rem;
+  color: #64748b;
+  font-size: 0.875rem;
 }
 
 .status-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .status-pending {
-  background-color: #ffd43b;
-  color: #664d03;
+  background-color: #fef9c3;
+  color: #854d0e;
 }
 
 .status-verified {
@@ -122,43 +143,42 @@
 }
 
 .action-button {
+  display: inline-flex;
+  align-items: center;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 6px;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-.action-button:hover {
-  transform: scale(1.05);
+  transition: all 0.2s ease;
 }
 
 .action-button.verify {
-  background-color: #40c057;
+  background-color: #22c55e;
   color: white;
 }
 
 .action-button.verify:hover {
-  background-color: #37b24d;
+  background-color: #16a34a;
 }
 
 .action-button.reject {
-  background-color: #fa5252;
+  background-color: #ef4444;
   color: white;
 }
 
 .action-button.reject:hover {
-  background-color: #e03131;
+  background-color: #dc2626;
 }
 
 .action-button.view {
-  background-color: #228be6;
+  background-color: #3b82f6;
   color: white;
 }
 
 .action-button.view:hover {
-  background-color: #1c7ed6;
+  background-color: #2563eb;
 }
 
 @media (max-width: 768px) {
@@ -166,9 +186,8 @@
     padding: 1rem;
   }
 
-  .user-info-section,
-  .document-verification-section {
-    padding: 1.5rem;
+  .verify-container {
+    padding: 1rem;
   }
 
   .document-item {
@@ -178,11 +197,10 @@
 
   .document-actions {
     width: 100%;
-    justify-content: space-between;
+    justify-content: stretch;
   }
 
   .action-button {
     flex: 1;
-    text-align: center;
   }
 } 

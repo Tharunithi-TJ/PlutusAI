@@ -28,7 +28,7 @@ class InsuranceFraudGraph:
         # Add nodes
         for policy in policies:
             self.graph.add_node(policy.id, type='policy', 
-                              premium=policy.premium, 
+                              premium=policy.premium_amount, 
                               start_date=policy.start_date.strftime('%Y-%m-%d'))
             
         for claim in claims:

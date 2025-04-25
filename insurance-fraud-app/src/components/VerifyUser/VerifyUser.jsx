@@ -3,9 +3,9 @@ import './VerifyUser.css';
 
 const VerifyUser = () => {
   const userInfo = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
+    name: 'Sundaresh Karthic',
+    email: 'sundareshkarthic@gmail.com',
+    phone: '9812341234',
     address: '123 Main St, Anytown, ST 12345'
   };
 
