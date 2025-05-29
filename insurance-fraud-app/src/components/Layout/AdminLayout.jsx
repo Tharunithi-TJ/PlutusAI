@@ -1,6 +1,6 @@
-import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
-import './AdminLayout.css';
+import React from "react";
+import { NavLink, Outlet } from "react-router-dom";
+import "./AdminLayout.css";
 
 const AdminLayout = () => {
   return (
@@ -11,43 +11,46 @@ const AdminLayout = () => {
             PlutusAI
           </NavLink>
           <nav className="nav-links">
-            <NavLink 
+            <NavLink
               to="/admin/dashboard"
-              className={({ isActive }) => isActive ? 'active' : ''}
+              className={({ isActive }) => (isActive ? "active" : "")}
             >
               Dashboard
             </NavLink>
-            <NavLink 
+            <NavLink
               to="/admin/manage-users"
-              className={({ isActive }) => isActive ? 'active' : ''}
+              className={({ isActive }) => (isActive ? "active" : "")}
             >
               Manage Users
             </NavLink>
-            <NavLink 
+            <NavLink
               to="/admin/blockchain-monitor"
-              className={({ isActive }) => isActive ? 'active' : ''}
+              className={({ isActive }) => (isActive ? "active" : "")}
             >
               Blockchain Monitor
             </NavLink>
-            <NavLink 
+            <NavLink
               to="/admin/system-check"
-              className={({ isActive }) => isActive ? 'active' : ''}
+              className={({ isActive }) => (isActive ? "active" : "")}
             >
               System Check
             </NavLink>
-            <NavLink 
+            <NavLink
               to="/admin/rl-monitor"
-              className={({ isActive }) => isActive ? 'active' : ''}
+              className={({ isActive }) => (isActive ? "active" : "")}
             >
               RL Monitor
+            </NavLink>
+            <NavLink
+              to="/admin/analytics"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Analytics
             </NavLink>
           </nav>
         </div>
         <div className="header-right">
-          <NavLink 
-            to="/admin/profile"
-            className="profile-button"
-          >
+          <NavLink to="/admin/profile" className="profile-button">
             A
           </NavLink>
         </div>
@@ -55,11 +58,9 @@ const AdminLayout = () => {
       <main className="main-content">
         <Outlet />
       </main>
-      <footer className="footer">
-        © 2024 PlutusAI. All rights reserved.
-      </footer>
+      <footer className="footer">© 2024 PlutusAI. All rights reserved.</footer>
     </div>
   );
 };
 
-export default AdminLayout; 
+export default AdminLayout;

@@ -385,9 +385,10 @@ const Analytics = () => {
   return (
     <div className="analytics-container">
       <h1>Insurance Analytics Dashboard</h1>
-      <button className="reset-button" onClick={resetVisualizations}>
+      
+      {/* <button className="reset-button" onClick={resetVisualizations}>
         Reset Visualizations
-      </button>
+      </button> */}
       
       <div className="charts-grid">
         <div className="chart-container">
