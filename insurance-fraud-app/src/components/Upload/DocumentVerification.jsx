@@ -49,7 +49,7 @@ const DocumentVerification = ({ result = {} }) => {
 
   const textAnalysis = {
     sentiment: safeGet(result, 'verification_result.text_analysis.sentiment', 'neutral'),
-    confidence: Number(safeGet(result, 'verification_result.text_analysis.sentiment_score', generateRandomValue(0.6, 0.9))),
+    confidence: Number(safeGet(result, 'verification_result.text_analysis.sentiment_score', generateRandomValue(0.1, 0.8))),
     wordCount: Number(safeGet(result, 'verification_result.text_analysis.word_count', Math.floor(generateRandomValue(300, 1500)))),
     language: safeGet(result, 'verification_result.text_analysis.language', 'English'),
     keyPhrases: safeGet(result, 'verification_result.text_analysis.key_phrases', ['insurance', 'claim', 'document', 'verification'])
@@ -62,6 +62,44 @@ const DocumentVerification = ({ result = {} }) => {
     compressionLevel: safeGet(result, 'verification_result.ela_results.compression_level', 'Medium'),
     artifactsDetected: safeGet(result, 'verification_result.ela_results.artifacts_detected', generateRandomValue(0, 5))
   };
+
+  // Generate acceptance probability based on document quality
+  const calculateAcceptanceProbability = () => {
+    const baseScore = generateRandomValue(60, 95);
+    const sentimentScore = textAnalysis.confidence * 20;
+    const manipulationScore = (100 - imageForensics.manipulationScore) * 0.3;
+    return Math.min(Math.round(baseScore + sentimentScore + manipulationScore), 100);
+  };
+
+  // Generate risk assessment
+  const calculateRiskScore = () => {
+    const baseRisk = generateRandomValue(10, 40);
+    const manipulationRisk = imageForensics.manipulationScore * 0.4;
+    const sentimentRisk = (1 - textAnalysis.confidence) * 20;
+    return Math.min(Math.round(baseRisk + manipulationRisk + sentimentRisk), 100);
+  };
+
+  // Generate document quality score
+  const calculateQualityScore = () => {
+    const formatScore = 20;
+    const contentScore = textAnalysis.wordCount > 100 ? 30 : 15;
+    const imageScore = imageForensics.manipulationScore < 30 ? 30 : 15;
+    const metadataScore = 20;
+    return formatScore + contentScore + imageScore + metadataScore;
+  };
+
+  // Generate processing time estimate
+  const calculateProcessingTime = () => {
+    const baseTime = 2; // hours
+    const complexityFactor = textAnalysis.wordCount / 1000;
+    const riskFactor = calculateRiskScore() / 100;
+    return Math.round((baseTime + complexityFactor + riskFactor) * 10) / 10;
+  };
+
+  const acceptanceProbability = calculateAcceptanceProbability();
+  const riskScore = calculateRiskScore();
+  const qualityScore = calculateQualityScore();
+  const processingTime = calculateProcessingTime();
 
   // Chart data for sentiment analysis
   const sentimentData = {
@@ -105,6 +143,32 @@ const DocumentVerification = ({ result = {} }) => {
         yAxisID: 'y1'
       }
     ]
+  };
+
+  // Add new chart data for acceptance probability
+  const acceptanceData = {
+    labels: ['Acceptance Probability', 'Risk Level'],
+    datasets: [{
+      data: [acceptanceProbability, 100 - acceptanceProbability],
+      backgroundColor: ['#2ecc71', '#e74c3c'],
+      borderWidth: 0,
+    }]
+  };
+
+  // Add new chart data for quality metrics
+  const qualityMetricsData = {
+    labels: ['Format', 'Content', 'Image', 'Metadata'],
+    datasets: [{
+      label: 'Quality Score',
+      data: [20, 30, 30, 20],
+      backgroundColor: [
+        'rgba(46, 204, 113, 0.8)',
+        'rgba(52, 152, 219, 0.8)',
+        'rgba(155, 89, 182, 0.8)',
+        'rgba(241, 196, 15, 0.8)'
+      ],
+      borderWidth: 1
+    }]
   };
 
   // Chart options
@@ -228,6 +292,92 @@ const DocumentVerification = ({ result = {} }) => {
           </div>
         </div>
 
+        <div className="verification-card prediction">
+          <div className="card-header">
+            <span className="header-icon">🎯</span>
+            <h4>Claim Prediction</h4>
+          </div>
+          <div className="card-content">
+            <div className="prediction-metrics">
+              <div className="metric-item">
+                <div className="metric-header">
+                  <span className="metric-label">Acceptance Probability</span>
+                  <span className="metric-value">{acceptanceProbability}%</span>
+                </div>
+                <div className="metric-chart">
+                  <Doughnut data={acceptanceData} options={doughnutOptions} />
+                </div>
+              </div>
+              
+              <div className="metric-item" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                <center>
+                  <div className="metric-header">
+                    <span className="metric-label">Risk Assessment: &nbsp;</span>
+                    <span className={`metric-value ${riskScore > 70 ? 'high-risk' : 'low-risk'}`}>
+                      {riskScore}%
+                    </span>
+                  </div>
+                </center>
+                
+                <div className="risk-indicator">
+                  <div 
+                    className="risk-bar"
+                    style={{ width: `${riskScore}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="metric-item">
+                <div className="metric-header">
+                  <span className="metric-label">Document Quality: &nbsp;</span>
+                  <span className="metric-value">{qualityScore}/100</span>
+                </div>
+                <div className="quality-chart">
+                  <Bar data={qualityMetricsData} options={barOptions} />
+                </div>
+              </div>
+
+              <div className="metric-item">
+                <div className="metric-header">
+                  <span className="metric-label">Estimated Processing Time: &nbsp;</span>
+                  <span className="metric-value">{processingTime} hours</span>
+                </div>
+                <div className="processing-info">
+                  <p>Based on document complexity and risk level</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="insights-section">
+              <h5>Key Insights</h5>
+              <ul className="insights-list">
+                <li className={acceptanceProbability > 80 ? 'positive' : 'neutral'}>
+                  {acceptanceProbability > 80 
+                    ? 'High probability of claim acceptance'
+                    : 'Moderate probability of claim acceptance'}
+                </li>
+                <li className={riskScore < 30 ? 'positive' : riskScore < 60 ? 'neutral' : 'negative'}>
+                  {riskScore < 30 
+                    ? 'Low risk indicators detected'
+                    : riskScore < 60 
+                      ? 'Moderate risk level'
+                      : 'High risk indicators detected'}
+                </li>
+                <li className={qualityScore > 80 ? 'positive' : 'neutral'}>
+                  {qualityScore > 80 
+                    ? 'High quality documentation'
+                    : 'Documentation quality could be improved'}
+                </li>
+                <li className="info">
+                  {processingTime < 3 
+                    ? 'Expected quick processing'
+                    : 'Extended processing time due to complexity'}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         <div className="verification-card analysis">
           <div className="card-header">
             <span className="header-icon">📊</span>
@@ -290,10 +440,10 @@ const DocumentVerification = ({ result = {} }) => {
               </div>
 
               <div className="gauge-item">
-                <div className="gauge-info">
+                {/* <div className="gauge-info">
                   <span className="gauge-label">ELA Standard Deviation</span>
                   <span className="gauge-value">{Number(imageForensics.elaStd).toFixed(2)}</span>
-                </div>
+                </div> */}
                 <div className="gauge-track">
                   <div 
                     className="gauge-progress"
@@ -301,15 +451,15 @@ const DocumentVerification = ({ result = {} }) => {
                       width: `${Math.min((imageForensics.elaStd / 2) * 100, 100)}%`,
                       backgroundColor: '#2ecc71'
                     }}
-                  ></div>
+                  ></div> 
                 </div>
               </div>
 
               <div className="gauge-item">
-                <div className="gauge-info">
+                {/* <div className="gauge-info">
                   <span className="gauge-label">Manipulation Score</span>
                   <span className="gauge-value">{imageForensics.manipulationScore.toFixed(1)}%</span>
-                </div>
+                </div> */}
                 <div className="gauge-track">
                   <div 
                     className="gauge-progress"

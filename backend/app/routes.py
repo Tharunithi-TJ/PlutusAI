@@ -37,6 +37,7 @@ def submit_claim():
         claim_type = request.form.get('claimType')
         description = request.form.get('description')
         files = request.files.getlist('files')
+        username = request.form.get('username', 'demouser123')
 
         if not files:
             return jsonify({
@@ -49,20 +50,40 @@ def submit_claim():
 
         for file in files:
             if file:
-                filename = file.filename
-                filepath = os.path.join(UPLOAD_FOLDER, filename)
+                # Create a unique filename with username and timestamp
+                timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+                original_filename = file.filename
+                file_extension = os.path.splitext(original_filename)[1]
+                unique_filename = f"{username}_{timestamp}_{original_filename}"
+                
+                # Ensure upload folder exists
+                if not os.path.exists(UPLOAD_FOLDER):
+                    os.makedirs(UPLOAD_FOLDER)
+                
+                filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
                 file.save(filepath)
-                saved_files.append(filepath)
+                saved_files.append({
+                    'original_name': original_filename,
+                    'saved_path': filepath,
+                    'username': username,
+                    'uploaded_at': timestamp
+                })
 
                 try:
                     result = document_verifier.verify_document(filepath)
                     verification_results.append({
-                        'filename': filename,
+                        'filename': original_filename,
+                        'saved_filename': unique_filename,
+                        'username': username,
+                        'uploaded_at': timestamp,
                         'verification_result': result
                     })
                 except Exception as e:
                     verification_results.append({
-                        'filename': filename,
+                        'filename': original_filename,
+                        'saved_filename': unique_filename,
+                        'username': username,
+                        'uploaded_at': timestamp,
                         'verification_result': {
                             'valid': False,
                             'reason': str(e)

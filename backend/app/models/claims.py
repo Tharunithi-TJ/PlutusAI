@@ -42,5 +42,6 @@ class Claim(db.Model):
             'reviewed_at': self.reviewed_at.isoformat() if self.reviewed_at else None,
             'reviewed_by': self.reviewed_by,
             'user_id': self.user_id,
-            'policy_id': self.policy_id
+            'policy_id': self.policy_id,
+            'username': self.claimant.username if self.claimant else None
         } 

@@ -7,7 +7,8 @@ const UploadDocuments = () => {
   const [formData, setFormData] = useState({
     claimType: 'Medical Claim',
     description: '',
-    files: []
+    files: [],
+    username: 'demouser123'  // Default username
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -81,6 +82,7 @@ const UploadDocuments = () => {
       const formDataObj = new FormData();
       formDataObj.append('claimType', formData.claimType);
       formDataObj.append('description', formData.description);
+      formDataObj.append('username', formData.username);  // Add username to form data
       
       // Append each file to the FormData
       formData.files.forEach(file => {
@@ -110,7 +112,8 @@ const UploadDocuments = () => {
         setFormData({
           claimType: 'Medical Claim',
           description: '',
-          files: []
+          files: [],
+          username: 'demouser123'  // Default username
         });
         setPreview([]);
       } else {
@@ -222,7 +225,9 @@ const UploadDocuments = () => {
         <div className="verification-results-container">
           <h3>Document Verification Results</h3>
           {verificationResults.map((result, index) => (
-            <DocumentVerification key={index} result={result} />
+            <div> 
+              <DocumentVerification key={index} result={result} />
+            </div>
           ))}
         </div>
       )}

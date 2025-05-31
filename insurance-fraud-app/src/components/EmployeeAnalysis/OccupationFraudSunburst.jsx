@@ -52,11 +52,35 @@ export default function OccupationFraudTreemap() {
             labels,
             parents,
             values,
-            textinfo: "label+value+percent parent",
-            hovertemplate: "<b>%{label}</b><br>Premium: %{value}<extra></extra>",
+            textinfo: "label+value",
+            hovertemplate: "<b>%{label}</b><br>Premium: %{value:,.0f}<br>Percentage: %{percentParent:.1%}<extra></extra>",
             marker: {
-              colorscale: "YlGnBu"
-            }
+              colorscale: [
+                [0, '#2c3e50'],    // Dark blue for total
+                [0.2, '#3498db'],  // Blue for occupations
+                [0.4, '#2980b9'],  // Medium blue
+                [0.6, '#1abc9c'],  // Teal
+                [0.8, '#16a085'],  // Dark teal
+                [1, '#27ae60']     // Green for fraud categories
+              ],
+              line: { width: 2, color: '#fff' }
+            },
+            textfont: {
+              size: 14,
+              color: '#fff',
+              family: 'Arial'
+            },
+            textposition: "middle center",
+            hoverlabel: {
+              bgcolor: '#2c3e50',
+              bordercolor: '#fff',
+              font: { size: 14, color: '#fff', family: 'Arial' }
+            },
+            hoveron: "all",
+            hovermode: "closest",
+            hoverdistance: 100,
+            hoverongaps: false,
+            texttemplate: "%{label}<br>%{value:,.0f}"
           }
         ]);
       })
@@ -76,9 +100,16 @@ export default function OccupationFraudTreemap() {
           layout={{
             width: 850,
             height: 700,
-            margin: { t: 40, l: 0, r: 0, b: 0 }
+            margin: { t: 40, l: 0, r: 0, b: 0 },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            hovermode: "closest",
+            hoverdistance: 100
           }}
-          config={{ responsive: true }}
+          config={{ 
+            responsive: true,
+            displayModeBar: false
+          }}
         />
       ) : (
         <p>Loading interactive chart...</p>

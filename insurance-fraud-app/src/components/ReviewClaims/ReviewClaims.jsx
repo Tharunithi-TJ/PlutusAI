@@ -38,12 +38,8 @@ const ReviewClaims = () => {
       if (filters.claimType) params.append('claim_type', filters.claimType);
       if (params.toString()) url += `?${params.toString()}`;
 
-      console.log('Fetching claims from:', url);
-
       const response = await fetch(url);
       const data = await response.json();
-
-      console.log('Response:', data);
 
       if (!response.ok) {
         throw new Error(data.message || `HTTP error! status: ${response.status}`);
@@ -62,87 +58,24 @@ const ReviewClaims = () => {
     }
   };
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
   const formatDateTime = (dateString) => {
-    const options = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    };
-    return new Date(dateString).toLocaleString('en-US', options);
-  };
-
-  const renderVerificationDetails = (result) => {
-    if (!result.verification_result) return null;
-    const vr = result.verification_result;
-
-    return (
-      <div className="verification-details">
-        <div className="verification-status">
-          <span className={`status-indicator ${vr.valid ? 'valid' : 'invalid'}`}>
-            {vr.valid ? 'Valid' : 'Invalid'}
-          </span>
-        </div>
-        
-        {vr.metadata && (
-          <div className="metadata-section">
-            <h5>Document Info</h5>
-            <p>Format: {vr.metadata.format}</p>
-            {vr.metadata.width && (
-              <p>Dimensions: {vr.metadata.width} x {vr.metadata.height}</p>
-            )}
-          </div>
-        )}
-
-        {vr.text_analysis && (
-          <div className="analysis-section">
-            <h5>Text Analysis</h5>
-            <p>Words: {vr.text_analysis.word_count}</p>
-            <p>Sentiment: {vr.text_analysis.sentiment}</p>
-            <p>Confidence: {(vr.text_analysis.sentiment_score * 100).toFixed(1)}%</p>
-          </div>
-        )}
-
-        {vr.ela_results && (
-          <div className="forensics-section">
-            <h5>Image Analysis</h5>
-            <p>ELA Score: {vr.ela_results.ela_mean.toFixed(2)}</p>
-            <p>Variation: {vr.ela_results.ela_std.toFixed(2)}</p>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const handleVerify = (id) => {
-    console.log('Verifying claim:', id);
-  };
-
-  const handleMarkSuspicious = (id) => {
-    console.log('Marking claim as suspicious:', id);
-  };
-
-  const handleReject = (id) => {
-    console.log('Rejecting claim:', id);
-  };
-
-  const handleViewDocument = (document) => {
-    console.log('Viewing document:', document);
-  };
-
-  const handleAnalyzeClaim = (claimId) => {
-    setSelectedClaim(claimId);
-    setShowAnalysis(true);
+    if (!dateString) return 'Not available';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      
+      const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      };
+      return date.toLocaleString('en-US', options);
+    } catch (err) {
+      return 'Invalid date';
+    }
   };
 
   const handleStatusUpdate = async (claimId, newStatus) => {
@@ -162,12 +95,10 @@ const ReviewClaims = () => {
       const data = await response.json();
 
       if (data.status === 'success') {
-        // Update local state
         setClaims(claims.map(claim => 
           claim.id === claimId ? { ...claim, status: newStatus } : claim
         ));
         setReviewData({ claimId: null, notes: '', showModal: false });
-        // Show success message
         alert(`Claim ${claimId} has been ${newStatus}`);
       } else {
         throw new Error(data.message);
@@ -191,7 +122,6 @@ const ReviewClaims = () => {
       });
 
       const data = await response.json();
-      console.log('Anomaly detection response:', data); // Debug log
 
       if (data.status === 'success') {
         setAnomalyResults(prev => ({
@@ -223,110 +153,59 @@ const ReviewClaims = () => {
     <div className="review-modal-overlay">
       <div className="review-modal">
         <h3>Review Claim #{claim.id}</h3>
-        <div className="modal-content">
-          <div className="review-summary">
-            <p><strong>Type:</strong> {claim.claim_type}</p>
-            <p><strong>Submitted:</strong> {formatDateTime(claim.submitted_at)}</p>
-            <p><strong>Documents:</strong> {claim.verification_results?.length || 0} files</p>
+        <div className="review-summary">
+          <div className="detail-item">
+            <span className="detail-label">Type: </span>
+            <span className="detail-value">{claim.claim_type}</span>
           </div>
-          <div className="review-notes">
-            <label htmlFor="review-notes">Review Notes:</label>
-            <textarea
-              id="review-notes"
-              value={reviewData.notes}
-              onChange={(e) => setReviewData({
-                ...reviewData,
-                notes: e.target.value
-              })}
-              placeholder="Enter your review notes..."
-            />
+          <div className="detail-item">
+            <span className="detail-label">Submitted By: </span>
+            <span className="detail-value">{claim.username || 'DemoUser123'}</span>
           </div>
-          <div className="review-actions">
-            <button 
-              className="approve-btn"
-              onClick={() => handleStatusUpdate(claim.id, 'approved')}
-            >
-              Approve Claim
-            </button>
-            <button 
-              className="reject-btn"
-              onClick={() => handleStatusUpdate(claim.id, 'rejected')}
-            >
-              Reject Claim
-            </button>
-            <button 
-              className="cancel-btn"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
+          <div className="detail-item">
+            <span className="detail-label">Submitted: </span>
+            <span className="detail-value">{formatDateTime(claim.submitted_at)}</span>
           </div>
+          <div className="detail-item">
+            <span className="detail-label">Documents: </span>
+            <span className="detail-value">{claim.verification_results?.length || 0} files</span>
+          </div>
+        </div>
+        <div className="review-notes">
+          <label htmlFor="review-notes">Review Notes</label>
+          <textarea
+            id="review-notes"
+            value={reviewData.notes}
+            onChange={(e) => setReviewData({
+              ...reviewData,
+              notes: e.target.value
+            })}
+            placeholder="Enter your review notes..."
+          />
+        </div>
+        <div className="review-actions">
+          <button 
+            className="approve-btn"
+            onClick={() => handleStatusUpdate(claim.id, 'approved')}
+          >
+            Approve Claim
+          </button>
+          <button 
+            className="reject-btn"
+            onClick={() => handleStatusUpdate(claim.id, 'rejected')}
+          >
+            Reject Claim
+          </button>
+          <button 
+            className="cancel-btn"
+            onClick={onClose}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>
   );
-
-  const AnomalyResults = ({ results }) => {
-    if (!results) return null;
-
-    const riskLevel = results.anomaly_details?.risk_level || {
-      level: 'Unknown',
-      color: '#6c757d'
-    };
-
-    return (
-      <div className="anomaly-results">
-        <h4>Risk Analysis Results</h4>
-        <div className="risk-score" style={{ 
-          color: riskLevel.color 
-        }}>
-          <span className="score">
-            Risk Score: {results.risk_score || 0}%
-          </span>
-          <span className="level">
-            ({riskLevel.level || 'Unknown'})
-          </span>
-        </div>
-
-        {results.anomaly_details?.document_anomalies?.length > 0 ? (
-          <div className="document-anomalies">
-            <h5>Document Anomalies Found:</h5>
-            {results.anomaly_details.document_anomalies.map((doc, index) => (
-              <div key={index} className="document-anomaly">
-                <h6>{doc.filename}</h6>
-                {doc.anomalies?.length > 0 ? (
-                  <ul>
-                    {doc.anomalies.map((anomaly, i) => (
-                      <li key={i} className={`severity-${anomaly.severity || 'low'}`}>
-                        {anomaly.details || 'Unknown anomaly'}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="no-anomalies">No anomalies detected</p>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="no-anomalies">No document anomalies detected</p>
-        )}
-
-        {results.anomaly_details?.risk_factors?.length > 0 && (
-          <div className="risk-factors">
-            <h5>Risk Factors:</h5>
-            <ul>
-              {results.anomaly_details.risk_factors.map((factor, index) => (
-                <li key={index} className={`severity-${factor.severity || 'low'}`}>
-                  <strong>{factor.factor}:</strong> {factor.details}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    );
-  };
 
   if (loading) return <div className="loading">Loading claims...</div>;
   if (error) return <div className="error">Error: {error}</div>;
@@ -335,9 +214,6 @@ const ReviewClaims = () => {
     <div className="review-claims-container">
       <div className="review-claims-header">
         <h2>Claims Review Dashboard</h2>
-        <div className="header-actions">
-          {/* Add any header actions here */}
-        </div>
       </div>
 
       <div className="filters-section">
@@ -371,8 +247,6 @@ const ReviewClaims = () => {
         </div>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
-
       <div className="claims-list">
         {claims.map(claim => (
           <div key={claim.id} className="claim-card">
@@ -390,15 +264,19 @@ const ReviewClaims = () => {
 
             <div className="claim-details">
               <div className="detail-item">
-                <span className="detail-label">Type</span>
+                <span className="detail-label">Type: </span>
                 <span className="detail-value">{claim.claim_type}</span>
               </div>
               <div className="detail-item">
-                <span className="detail-label">Description</span>
+                <span className="detail-label">Description: </span>
                 <span className="detail-value">{claim.description}</span>
               </div>
               <div className="detail-item">
-                <span className="detail-label">Documents</span>
+                <span className="detail-label">Submitted By: </span>
+                <span className="detail-value">{claim.username || 'Unknown User'}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-label">Documents: </span>
                 <span className="detail-value">
                   {claim.verification_results?.length || 0} files
                 </span>
@@ -409,7 +287,54 @@ const ReviewClaims = () => {
               <div className="documents-section">
                 <h4>Uploaded Documents</h4>
                 <div className="documents-grid">
-                  {renderVerificationDetails(claim.verification_results[0])}
+                  {claim.verification_results.map((result, index) => (
+                    <div key={index} className="document-info">
+                      <h5>
+                        <span className="filename">Document {index + 1} - {result.filename}</span>
+                        <span className="document-meta">
+                          Uploaded by: {result.username || 'demouser123'}
+                          {/* {result.uploaded_at && (
+                            <>
+                              <br />
+                              Uploaded at: {formatDateTime(result.uploaded_at)}
+                            </>
+                          )} */}
+                        </span>
+                      </h5>
+                      <div className="info-grid">
+                        <div className="info-item">
+                          <span className="detail-label">Status</span>
+                          <center>
+                            <span className={`status-indicator ${result.verification_result?.valid ? 'valid' : 'invalid'}`}>
+                              {result.verification_result?.valid ? 'Valid' : 'Invalid'}
+                            </span>
+                          </center>
+                          
+                        </div>
+                        <div className="info-item">
+                          <span className="detail-label">Format</span>
+                          <span className="detail-value">
+                            {result.verification_result?.metadata?.format != "unknown" ? "PDF" : 'PDF'}
+                          </span>
+                        </div>
+                        {/* <center> 
+                          1
+                        </center> */}
+                        {/* {result.verification_result?.metadata?.width && (
+                          <div className="info-item">
+                            <span className="detail-label">Dimensions</span>
+                            <span className="detail-value">
+                              {result.verification_result.metadata.width} x {result.verification_result.metadata.height}
+                            </span>
+                          </div>
+                        )} */}
+                        <div className="info-item">
+                          <span className="detail-label">Saved As</span>
+                          <span className="detail-value">{result.saved_filename}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -445,7 +370,29 @@ const ReviewClaims = () => {
             </div>
 
             {anomalyResults[claim.id] && (
-              <AnomalyResults results={anomalyResults[claim.id]} />
+              <div className="anomaly-results">
+                <h4>Risk Analysis Results</h4>
+                <div className="risk-score">
+                  <span className="score">
+                    Risk Score: {anomalyResults[claim.id].risk_score || 0}%
+                  </span>
+                  <span className={`level ${anomalyResults[claim.id].anomaly_details?.risk_level?.level?.toLowerCase()}`}>
+                    ({anomalyResults[claim.id].anomaly_details?.risk_level?.level || 'Unknown'})
+                  </span>
+                </div>
+                {anomalyResults[claim.id].anomaly_details?.risk_factors?.length > 0 && (
+                  <div className="risk-factors">
+                    <h5>Risk Factors:</h5>
+                    <ul>
+                      {anomalyResults[claim.id].anomaly_details.risk_factors.map((factor, index) => (
+                        <li key={index} className={`severity-${factor.severity || 'low'}`}>
+                          <strong>{factor.factor}:</strong> {factor.details}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         ))}
