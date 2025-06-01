@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import './LinkedAnalytics.css';
+import Chatbot from './Chatbot';
 
 // Vibrant color palette matching Analytics component
 const COLORS = {
@@ -753,6 +754,41 @@ const createHistogram = (container, data) => {
     .text('Lifetime Fraud Risk Distribution');
 };
 
+const METRIC_SECTIONS = [
+  {
+    key: 'user',
+    label: 'User-Specific Metrics',
+    diagrams: [
+      { key: 'sparkline', label: 'Claim Frequency Trend' },
+      { key: 'bullet', label: 'Claim Severity Deviation' },
+      { key: 'radar', label: 'Behavioral Consistency' },
+      { key: 'force', label: 'Beneficiary Network' },
+      { key: 'timeline', label: 'Policy Revival Timeline' },
+    ],
+  },
+  {
+    key: 'general',
+    label: 'General-Purpose Metrics',
+    diagrams: [
+      { key: 'gauge', label: 'Fraud Detection Rate' },
+      { key: 'stackedBar', label: 'False Positive Rate by Category' },
+      { key: 'heatmap', label: 'Document Forgery Confidence' },
+      { key: 'choropleth', label: 'Geospatial Fraud Density' },
+      { key: 'waterfall', label: 'Resolution Time by Stage' },
+      { key: 'prCurve', label: 'Precision-Recall Curve' },
+    ],
+  },
+  {
+    key: 'hybrid',
+    label: 'Advanced Hybrid Metrics',
+    diagrams: [
+      { key: 'bubble', label: 'Risk-Adjusted Claim Value' },
+      { key: 'sankey', label: 'Provider-Claimant Network' },
+      { key: 'hist', label: 'Lifetime Fraud Risk Distribution' },
+    ],
+  },
+];
+
 const LinkedAnalytics = () => {
   // State for User-Specific Metrics
   const [userMetrics, setUserMetrics] = useState({
@@ -802,6 +838,10 @@ const LinkedAnalytics = () => {
   const bubbleRef = useRef(null);
   const sankeyRef = useRef(null);
   const histRef = useRef(null);
+
+  // Inside LinkedAnalytics component, after useState declarations
+  const [selectedSection, setSelectedSection] = useState('user');
+  const [selectedDiagram, setSelectedDiagram] = useState('sparkline');
 
   // Effect to update charts when parameters change
   useEffect(() => {
@@ -1173,134 +1213,170 @@ const LinkedAnalytics = () => {
   }, [generalMetrics]);
 
   return (
-    <div className="linked-analytics">
-      <div className="section">
-        <h2>User-Specific Metrics</h2>
-        <div className="parameters">
-          <div className="parameter">
-            <label>User ID:</label>
-            <input
-              type="text"
-              value={userMetrics.userId}
-              onChange={(e) => setUserMetrics({...userMetrics, userId: e.target.value})}
-            />
-          </div>
-          <div className="parameter">
-            <label>Policy Details:</label>
-            <select
-              value={userMetrics.policyDetails.type || ''}
-              onChange={(e) => setUserMetrics({
-                ...userMetrics,
-                policyDetails: {...userMetrics.policyDetails, type: e.target.value}
-              })}
-            >
-              <option value="">Select Policy Type</option>
-              <option value="health">Health Insurance</option>
-              <option value="auto">Auto Insurance</option>
-              <option value="property">Property Insurance</option>
-            </select>
-        </div>
-          </div>
-        <div className="user-metrics-charts">
-          <div className="user-metrics-row">
-            <svg ref={sparklineRef} style={{ width: '300px', height: '120px', margin: '20px' }} />
-            <svg ref={bulletRef} style={{ width: '300px', height: '70px', margin: '20px' }} />
-            <svg ref={radarRef} style={{ width: '300px', height: '240px', margin: '20px' }} />
-          </div>
-          <div className="user-metrics-row">
-            <svg ref={forceRef} style={{ width: '350px', height: '240px', margin: '20px' }} />
-            <svg ref={timelineRef} style={{ width: '500px', height: '140px', margin: '20px' }} />
-          </div>
-        </div>
+    <div className="linked-analytics" style={{ display: 'flex', minHeight: '90vh' }}>
+      {/* Sidebar: Section Tabs */}
+      <div style={{ width: 220, background: '#fff', borderRight: '1px solid #eee', padding: '2rem 1rem' }}>
+        <h2 style={{ textAlign: 'center', fontWeight: 700, marginBottom: '2rem', fontSize: '1.5rem' }}>Metrics</h2>
+        {METRIC_SECTIONS.map(section => (
+          <button
+            key={section.key}
+            onClick={() => setSelectedSection(section.key)}
+            style={{
+              width: '100%',
+              padding: '1rem',
+              marginBottom: '1rem',
+              background: selectedSection === section.key ? '#2980b9' : '#f0f2f5',
+              color: selectedSection === section.key ? '#fff' : '#2c3e50',
+              border: 'none',
+              borderRadius: 8,
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'background 0.2s',
+            }}
+          >
+            {section.label}
+          </button>
+        ))}
       </div>
 
-      <div className="section">
-        <h2>General-Purpose Metrics</h2>
-        <div className="parameters">
-          <div className="parameter">
-            <label>Claim Type:</label>
-            <select
-              value={generalMetrics.claimType}
-              onChange={(e) => setGeneralMetrics({...generalMetrics, claimType: e.target.value})}
-            >
-              <option value="all">All Claims</option>
-              <option value="health">Health Claims</option>
-              <option value="auto">Auto Claims</option>
-              <option value="property">Property Claims</option>
-            </select>
-        </div>
-          <div className="parameter">
-            <label>Time Period:</label>
-            <select
-              value={generalMetrics.timePeriod}
-              onChange={(e) => setGeneralMetrics({...generalMetrics, timePeriod: e.target.value})}
-            >
-              <option value="last7days">Last 7 Days</option>
-              <option value="last30days">Last 30 Days</option>
-              <option value="last90days">Last 90 Days</option>
-              <option value="lastYear">Last Year</option>
-            </select>
-        </div>
-          <div className="parameter">
-            <label>Geographic Region:</label>
-            <select
-              value={generalMetrics.geographicRegion}
-              onChange={(e) => setGeneralMetrics({...generalMetrics, geographicRegion: e.target.value})}
-            >
-              <option value="all">All Regions</option>
-              <option value="north">North</option>
-              <option value="south">South</option>
-              <option value="east">East</option>
-              <option value="west">West</option>
-            </select>
-        </div>
-        </div>
-        <div className="user-metrics-charts">
-          <div className="user-metrics-row">
-            <svg ref={gaugeRef} style={{ width: '300px', height: '180px', margin: '20px' }} />
-            <svg ref={stackedBarRef} style={{ width: '300px', height: '220px', margin: '20px' }} />
-            <svg ref={heatmapRef} style={{ width: '300px', height: '220px', margin: '20px' }} />
+      {/* Main Diagram Area */}
+      <div style={{ flex: 1, padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {/* Render parameters for the selected section */}
+        {selectedSection === 'user' && (
+          <div className="parameters" style={{ marginBottom: '2rem', width: '100%', maxWidth: 700 }}>
+            <div className="parameter">
+              <label>User ID:</label>
+              <input
+                type="text"
+                value={userMetrics.userId}
+                onChange={(e) => setUserMetrics({...userMetrics, userId: e.target.value})}
+              />
+            </div>
+            <div className="parameter">
+              <label>Policy Details:</label>
+              <select
+                value={userMetrics.policyDetails.type || ''}
+                onChange={(e) => setUserMetrics({
+                  ...userMetrics,
+                  policyDetails: {...userMetrics.policyDetails, type: e.target.value}
+                })}
+              >
+                <option value="">Select Policy Type</option>
+                <option value="health">Health Insurance</option>
+                <option value="auto">Auto Insurance</option>
+                <option value="property">Property Insurance</option>
+              </select>
+            </div>
           </div>
-          <div className="user-metrics-row">
-            <svg ref={choroplethRef} style={{ width: '300px', height: '220px', margin: '20px' }} />
-            <svg ref={waterfallRef} style={{ width: '300px', height: '220px', margin: '20px' }} />
-            <svg ref={prCurveRef} style={{ width: '300px', height: '220px', margin: '20px' }} />
+        )}
+        {selectedSection === 'general' && (
+          <div className="parameters" style={{ marginBottom: '2rem', width: '100%', maxWidth: 900, display: 'flex', gap: 24 }}>
+            <div className="parameter">
+              <label>Claim Type:</label>
+              <select
+                value={generalMetrics.claimType}
+                onChange={(e) => setGeneralMetrics({...generalMetrics, claimType: e.target.value})}
+              >
+                <option value="all">All Claims</option>
+                <option value="health">Health Claims</option>
+                <option value="auto">Auto Claims</option>
+                <option value="property">Property Claims</option>
+              </select>
+            </div>
+            <div className="parameter">
+              <label>Time Period:</label>
+              <select
+                value={generalMetrics.timePeriod}
+                onChange={(e) => setGeneralMetrics({...generalMetrics, timePeriod: e.target.value})}
+              >
+                <option value="last7days">Last 7 Days</option>
+                <option value="last30days">Last 30 Days</option>
+                <option value="last90days">Last 90 Days</option>
+                <option value="lastYear">Last Year</option>
+              </select>
+            </div>
+            <div className="parameter">
+              <label>Geographic Region:</label>
+              <select
+                value={generalMetrics.geographicRegion}
+                onChange={(e) => setGeneralMetrics({...generalMetrics, geographicRegion: e.target.value})}
+              >
+                <option value="all">All Regions</option>
+                <option value="north">North</option>
+                <option value="south">South</option>
+                <option value="east">East</option>
+                <option value="west">West</option>
+              </select>
+            </div>
           </div>
+        )}
+        {selectedSection === 'hybrid' && (
+          <div className="parameters" style={{ marginBottom: '2rem', width: '100%', maxWidth: 700 }}>
+            <div className="parameter">
+              <label>User ID:</label>
+              <input
+                type="text"
+                value={hybridMetrics.userId}
+                onChange={(e) => setHybridMetrics({...hybridMetrics, userId: e.target.value})}
+              />
+            </div>
+            <div className="parameter">
+              <label>Provider Network:</label>
+              <select
+                value={hybridMetrics.providerNetwork}
+                onChange={(e) => setHybridMetrics({...hybridMetrics, providerNetwork: e.target.value})}
+              >
+                <option value="all">All Networks</option>
+                <option value="network1">Network 1</option>
+                <option value="network2">Network 2</option>
+                <option value="network3">Network 3</option>
+              </select>
+            </div>
+          </div>
+        )}
+        {/* Render all diagrams for the selected section */}
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {selectedSection === 'user' && (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '32px' }}>
+                <svg ref={sparklineRef} style={{ width: '350px', height: '140px' }} />
+                <svg ref={bulletRef} style={{ width: '350px', height: '90px' }} />
+                <svg ref={radarRef} style={{ width: '350px', height: '260px' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '32px' }}>
+                <svg ref={forceRef} style={{ width: '350px', height: '260px' }} />
+                <svg ref={timelineRef} style={{ width: '500px', height: '160px' }} />
+              </div>
+            </>
+          )}
+          {selectedSection === 'general' && (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '32px' }}>
+                <svg ref={gaugeRef} style={{ width: '300px', height: '180px' }} />
+                <svg ref={stackedBarRef} style={{ width: '300px', height: '220px' }} />
+                <svg ref={heatmapRef} style={{ width: '300px', height: '220px' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '32px' }}>
+                <svg ref={choroplethRef} style={{ width: '300px', height: '220px' }} />
+                <svg ref={waterfallRef} style={{ width: '300px', height: '220px' }} />
+                <svg ref={prCurveRef} style={{ width: '300px', height: '220px' }} />
+              </div>
+            </>
+          )}
+          {selectedSection === 'hybrid' && (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '32px' }}>
+              <svg ref={bubbleRef} style={{ width: '350px', height: '240px' }} />
+              <svg ref={sankeyRef} style={{ width: '350px', height: '240px' }} />
+              <svg ref={histRef} style={{ width: '350px', height: '240px' }} />
+            </div>
+          )}
         </div>
       </div>
-
-      <div className="section">
-        <h2>Advanced Hybrid Metrics</h2>
-        <div className="parameters">
-          <div className="parameter">
-            <label>User ID:</label>
-            <input
-              type="text"
-              value={hybridMetrics.userId}
-              onChange={(e) => setHybridMetrics({...hybridMetrics, userId: e.target.value})}
-            />
-          </div>
-          <div className="parameter">
-            <label>Provider Network:</label>
-            <select
-              value={hybridMetrics.providerNetwork}
-              onChange={(e) => setHybridMetrics({...hybridMetrics, providerNetwork: e.target.value})}
-            >
-              <option value="all">All Networks</option>
-              <option value="network1">Network 1</option>
-              <option value="network2">Network 2</option>
-              <option value="network3">Network 3</option>
-            </select>
-          </div>
-        </div>
-        <div className="user-metrics-charts">
-          <div className="user-metrics-row">
-            <svg ref={bubbleRef} style={{ width: '350px', height: '240px', margin: '20px' }} />
-            <svg ref={sankeyRef} style={{ width: '350px', height: '240px', margin: '20px' }} />
-            <svg ref={histRef} style={{ width: '350px', height: '240px', margin: '20px' }} />
-          </div>
-        </div>
-      </div>
+      {/* Chatbot floating button and chat window */}
+      <Chatbot
+        sectionLabel={METRIC_SECTIONS.find(s => s.key === selectedSection).label}
+        diagramLabels={METRIC_SECTIONS.find(s => s.key === selectedSection).diagrams.map(d => d.label)}
+      />
     </div>
   );
 };
