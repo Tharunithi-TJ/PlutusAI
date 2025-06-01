@@ -21,6 +21,9 @@ import LinkedAnalytics from './components/LinkedAnalytics.js';
 import GraphAnalysis from './components/GraphAnalysis';
 import RLMonitor from './components/RLMonitor/RLMonitor';
 import EmployeeAnalytics from './components/EmployeeAnalysis/analyticsEmployee.jsx';
+import AnalystLayout from './components/Layout/AnalystLayout';
+import AnalystDashboard from './components/AnalystDashboard/AnalystDashboard';
+import AdvancedAnalytics from './components/AnalystDashboard/AdvancedAnalytics';
 import './App.css';
 
 function App() {
@@ -61,6 +64,15 @@ function App() {
             <Route path="analytics" element={<Analytics />} />
             <Route path="rl-monitor" element={<RLMonitor />} />
             <Route path="profile" element={<MyProfile />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
+          </Route>
+
+          {/* Analyst routes */}
+          <Route path="/analyst" element={<AnalystLayout />}>
+            <Route path="dashboard" element={<AnalystDashboard />} />
+            <Route path="employee-analysis" element={<EmployeeAnalytics />} />
+            <Route path="linked-analytics" element={<LinkedAnalytics />} />
+            <Route path="advanced-analytics" element={<AdvancedAnalytics />} />
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
 

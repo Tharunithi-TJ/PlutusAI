@@ -1,0 +1,141 @@
+.advanced-analytics-container {
+  display: flex;
+  min-height: 80vh;
+  background: linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.advanced-sidebar {
+  width: 260px;
+  background: #fff;
+  border-right: 1.5px solid #e0e7ef;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 2px 0 12px 0 rgba(41,128,185,0.04);
+  z-index: 2;
+}
+
+.advanced-sidebar h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2980b9;
+  margin-bottom: 2rem;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  text-align: left;
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.08rem;
+  color: #34495e;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+  position: relative;
+}
+
+.sidebar-btn:hover {
+  background: linear-gradient(90deg, #e3f0fc 0%, #eaf6fb 100%);
+  color: #2980b9;
+  transform: translateX(4px) scale(1.03);
+  box-shadow: 0 2px 8px 0 rgba(41,128,185,0.07);
+}
+
+.sidebar-btn.active {
+  background: linear-gradient(90deg, #2980b9 0%, #6dd5fa 100%);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 16px 0 rgba(41,128,185,0.13);
+  transform: scale(1.05);
+}
+
+.advanced-main {
+  flex: 1;
+  padding: 2.5rem 3rem 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.advanced-main h3 {
+  font-size: 1.5rem;
+  color: #1a237e;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.2px;
+}
+
+.metric-desc {
+  color: #34495e;
+  font-size: 1.08rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.chart-area {
+  width: 100%;
+  max-width: 700px;
+  min-height: 380px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px 0 rgba(41,128,185,0.10);
+  padding: 2rem 2rem 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInChart 0.7s cubic-bezier(0.4,0,0.2,1);
+  margin: 0 auto;
+}
+
+@keyframes fadeInChart {
+  from { opacity: 0; transform: translateY(30px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 900px) {
+  .advanced-main {
+    padding: 1.5rem 0.5rem;
+  }
+  .chart-area {
+    padding: 1rem 0.5rem;
+    min-height: 260px;
+  }
+  .advanced-sidebar {
+    width: 180px;
+    padding: 1rem 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .advanced-analytics-container {
+    flex-direction: column;
+  }
+  .advanced-sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: stretch;
+    border-right: none;
+    border-bottom: 1.5px solid #e0e7ef;
+    box-shadow: none;
+    padding: 0.5rem 0.5rem;
+    overflow-x: auto;
+  }
+  .sidebar-btn {
+    min-width: 140px;
+    margin-bottom: 0;
+    margin-right: 0.5rem;
+    font-size: 0.98rem;
+    padding: 0.7rem 0.7rem;
+  }
+  .advanced-main {
+    padding: 1rem 0.2rem;
+  }
+} 

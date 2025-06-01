@@ -39,6 +39,11 @@ const Login = () => {
       return;
     }
 
+    if (formData.email === 'analyst@demo.com' && formData.password === 'demo123') {
+      navigate('/analyst/dashboard');
+      return;
+    }
+
     try {
       // Attempt to authenticate with backend
       const response = await authService.login(formData.email, formData.password);
@@ -58,6 +63,9 @@ const Login = () => {
           break;
         case 'admin':
           navigate('/admin/dashboard');
+          break;
+        case 'analyst':
+          navigate('/analyst/dashboard');
           break;
         default:
           setError('Invalid user role');
@@ -128,6 +136,7 @@ const Login = () => {
             <p>Policy Holder: policyholder@demo.com / demo123</p>
             <p>Bank Employee: employee@demo.com / demo123</p>
             <p>Admin: admin@demo.com / demo123</p>
+            <p>Analyst: analyst@demo.com / demo123</p>
           </div>
 
           <p className="register-link">
