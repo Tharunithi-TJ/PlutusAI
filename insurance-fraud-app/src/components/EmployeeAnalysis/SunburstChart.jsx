@@ -103,6 +103,7 @@ export default function SunburstChart() {
       ) : (
         <p>Loading chart...</p>
       )}
+      
     </div>
   );
 }

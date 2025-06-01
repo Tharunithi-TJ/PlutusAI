@@ -6,6 +6,8 @@ import AgeHistogram from "./ageHist";
 import TopCityPremiumBar from "./topcitybar";
 import NumericCorrelationHeatmap from "./heatmap";
 import SunburstChart from "./SunburstChart"; 
+import Chatbot from "../Chatbot";
+
 
 const chartOptions = [
   { key: "sunburst", label: "Product > Channel > Fraud Sunburst" },
@@ -70,6 +72,8 @@ export default function EmployeeAnalytics() {
 
       {/* Chart Display Area */}
       <div style={{ flex: 1, padding: 20 }}>{renderChart()}</div>
+
+      <Chatbot />
     </div>
   );
 }
