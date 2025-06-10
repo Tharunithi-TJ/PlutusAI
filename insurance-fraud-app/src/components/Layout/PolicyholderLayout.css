@@ -9,7 +9,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, rgba(255, 82, 168, 0.15), rgba(116, 55, 189, 0.15));
+  background: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 82, 168, 0.2);
@@ -79,7 +79,7 @@
 .main-content {
   flex: 1;
   padding: 2rem;
-  background: linear-gradient(135deg, rgba(255, 82, 168, 0.08) 0%, rgba(116, 55, 189, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(100, 179, 244, 0.18) 0%, rgba(180, 220, 255, 0.18) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -92,8 +92,8 @@
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(255, 82, 168, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(116, 55, 189, 0.08) 0%, transparent 50%);
+    radial-gradient(circle at 20% 20%, rgba(100, 179, 244, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(180, 220, 255, 0.18) 0%, transparent 50%);
   z-index: 1;
   pointer-events: none;
 }

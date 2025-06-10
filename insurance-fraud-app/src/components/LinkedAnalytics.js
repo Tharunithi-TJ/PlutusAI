@@ -275,7 +275,7 @@ const createGaugeMeter = (container, value) => {
     .endAngle(Math.PI/2);
   svg.append('path')
     .attr('d', arc())
-    .attr('transform', `translate(${width/2},${height/2 + 10})`)
+    .attr('transform', `translate(${width/2},${height/2 + 30})`)
     .attr('fill', '#eaf1fb');
   svg.append('path')
     .datum({ endAngle: -Math.PI/2 + (Math.PI * value / 100) })
@@ -283,14 +283,14 @@ const createGaugeMeter = (container, value) => {
       .innerRadius(60)
       .outerRadius(80)
       .startAngle(-Math.PI/2))
-    .attr('transform', `translate(${width/2},${height/2 + 10})`)
+    .attr('transform', `translate(${width/2},${height/2 + 30})`)
     .attr('fill', d3.interpolateRdYlGn(value / 100))
     .attr('stroke', '#2980b9')
     .attr('stroke-width', 2)
     .style('filter', 'drop-shadow(0 2px 4px #2980b955)');
   svg.append('text')
     .attr('x', width / 2)
-    .attr('y', 38)
+    .attr('y', 28)
     .attr('text-anchor', 'middle')
     .attr('class', 'chart-title')
     .text('Fraud Detection Rate');
@@ -585,41 +585,26 @@ const createSankeyDiagram = (container, data) => {
       .style('box-shadow', '0 2px 8px #2980b933')
       .style('opacity', 0);
   }
-  // Draw links as lines between node centers (with gradient)
-  const defs = svg.append('defs');
-  defs.append('linearGradient')
-    .attr('id', 'sankey-link-gradient')
-    .attr('x1', '0%').attr('x2', '100%').attr('y1', '0%').attr('y2', '0%')
-    .selectAll('stop')
-    .data([
-      { offset: '0%', color: COLORS.primary },
-      { offset: '100%', color: COLORS.secondary }
-    ])
-    .enter().append('stop')
-    .attr('offset', d => d.offset)
-    .attr('stop-color', d => d.color);
-  const links = [
-    { source: 0, target: 1, width: 5 },
-    { source: 2, target: 3, width: 3 }
-  ];
-  svg.selectAll('.sankey-link')
-    .data(links)
-    .enter()
-    .append('line')
-    .attr('class', 'sankey-link')
-    .attr('x1', d => nodePositions[d.source].x + 80)
-    .attr('y1', d => nodePositions[d.source].y + 15)
-    .attr('x2', d => nodePositions[d.source].x + 80)
-    .attr('y2', d => nodePositions[d.source].y + 15)
-    .attr('stroke', 'url(#sankey-link-gradient)')
-    .attr('stroke-width', d => d.width)
-    .attr('opacity', 0)
-    .transition()
-    .duration(700)
-    .attr('x2', d => nodePositions[d.target].x)
-    .attr('y2', d => nodePositions[d.target].y + 15)
-    .attr('opacity', 0.5);
-  // Draw nodes
+  // Draw links as lines between all node pairs (for demo)
+  const nodeColors = ['#2980b9', '#e67e22', '#27ae60', '#8e44ad'];
+  const linkColors = ['#16a085', '#c0392b', '#f39c12', '#34495e', '#d35400', '#2ecc71'];
+  let linkIdx = 0;
+  for (let i = 0; i < nodePositions.length; i++) {
+    for (let j = 0; j < nodePositions.length; j++) {
+      if (i !== j) {
+        svg.append('line')
+          .attr('x1', nodePositions[i].x + 80/2)
+          .attr('y1', nodePositions[i].y + 15)
+          .attr('x2', nodePositions[j].x + 80/2)
+          .attr('y2', nodePositions[j].y + 15)
+          .attr('stroke', linkColors[linkIdx % linkColors.length])
+          .attr('stroke-width', 3)
+          .attr('opacity', 0.25);
+        linkIdx++;
+      }
+    }
+  }
+  // Draw nodes with different colors
   svg.selectAll('.sankey-node')
     .data(nodePositions)
     .enter()
@@ -629,22 +614,15 @@ const createSankeyDiagram = (container, data) => {
     .attr('y', d => d.y)
     .attr('width', 80)
     .attr('height', 30)
-    .attr('fill', COLORS.primary)
-    .attr('opacity', 0)
+    .attr('fill', (d, i) => nodeColors[i % nodeColors.length])
+    .attr('opacity', 0.7)
     .attr('rx', 12)
-    .style('filter', 'drop-shadow(0 2px 8px #2980b955)')
-    .transition()
-    .duration(700)
-    .attr('opacity', 0.7);
+    .style('filter', 'drop-shadow(0 2px 8px #2980b955)');
   svg.selectAll('.sankey-node')
     .on('mouseover', function(event, d, i) {
       d3.select(this)
-        .attr('fill', COLORS.secondary)
+        .attr('fill', '#e74c3c')
         .attr('opacity', 1);
-      svg.selectAll('.sankey-link')
-        .filter(link => link.source === nodePositions.indexOf(d) || link.target === nodePositions.indexOf(d))
-        .attr('opacity', 1)
-        .attr('stroke-width', link => link.width + 2);
       tooltip.transition().duration(200).style('opacity', 1);
       tooltip.html(`<b>Node ${nodePositions.indexOf(d) + 1}</b>`)
         .style('left', (event.pageX + 16) + 'px')
@@ -654,19 +632,16 @@ const createSankeyDiagram = (container, data) => {
       tooltip.style('left', (event.pageX + 16) + 'px')
         .style('top', (event.pageY - 28) + 'px');
     })
-    .on('mouseout', function(event, d) {
+    .on('mouseout', function(event, d, i) {
       d3.select(this)
-        .attr('fill', COLORS.primary)
+        .attr('fill', (d, i) => nodeColors[i % nodeColors.length])
         .attr('opacity', 0.7);
-      svg.selectAll('.sankey-link')
-        .attr('opacity', 0.5)
-        .attr('stroke-width', link => link.width);
       tooltip.transition().duration(300).style('opacity', 0);
     });
   svg.append('text')
     .attr('x', width / 2)
     .attr('y', 38)
-      .attr('text-anchor', 'middle')
+    .attr('text-anchor', 'middle')
     .attr('class', 'chart-title')
     .text('Provider-Claimant Network');
 };
@@ -1106,7 +1081,13 @@ const LinkedAnalytics = () => {
         .attr('cx', d => xScale(d.date))
         .attr('cy', d => yScale(d.value))
         .attr('r', 4)
-        .attr('fill', d => d.flag ? COLORS.secondary : COLORS.primary);
+        .attr('fill', d => d.flag ? COLORS.secondary : COLORS.primary)
+        .on('mouseover', function(d) {
+          d3.select(this).attr('r', 6);
+        })
+        .on('mouseout', function(d) {
+          d3.select(this).attr('r', 4);
+        });
       svg.append('g')
         .attr('transform', `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(xScale));
@@ -1215,24 +1196,13 @@ const LinkedAnalytics = () => {
   return (
     <div className="linked-analytics" style={{ display: 'flex', minHeight: '90vh' }}>
       {/* Sidebar: Section Tabs */}
-      <div style={{ width: 220, background: '#fff', borderRight: '1px solid #eee', padding: '2rem 1rem' }}>
-        <h2 style={{ textAlign: 'center', fontWeight: 700, marginBottom: '2rem', fontSize: '1.5rem' }}>Metrics</h2>
+      <div className="linked-sidebar">
+        <h2>Metrics</h2>
         {METRIC_SECTIONS.map(section => (
           <button
             key={section.key}
+            className={`linked-sidebar-btn${selectedSection === section.key ? ' active' : ''}`}
             onClick={() => setSelectedSection(section.key)}
-            style={{
-              width: '100%',
-              padding: '1rem',
-              marginBottom: '1rem',
-              background: selectedSection === section.key ? '#2980b9' : '#f0f2f5',
-              color: selectedSection === section.key ? '#fff' : '#2c3e50',
-              border: 'none',
-              borderRadius: 8,
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background 0.2s',
-            }}
           >
             {section.label}
           </button>
@@ -1270,43 +1240,46 @@ const LinkedAnalytics = () => {
           </div>
         )}
         {selectedSection === 'general' && (
-          <div className="parameters" style={{ marginBottom: '2rem', width: '100%', maxWidth: 900, display: 'flex', gap: 24 }}>
-            <div className="parameter">
-              <label>Claim Type:</label>
-              <select
-                value={generalMetrics.claimType}
-                onChange={(e) => setGeneralMetrics({...generalMetrics, claimType: e.target.value})}
-              >
-                <option value="all">All Claims</option>
-                <option value="health">Health Claims</option>
-                <option value="auto">Auto Claims</option>
-                <option value="property">Property Claims</option>
-              </select>
-            </div>
-            <div className="parameter">
-              <label>Time Period:</label>
-              <select
-                value={generalMetrics.timePeriod}
-                onChange={(e) => setGeneralMetrics({...generalMetrics, timePeriod: e.target.value})}
-              >
-                <option value="last7days">Last 7 Days</option>
-                <option value="last30days">Last 30 Days</option>
-                <option value="last90days">Last 90 Days</option>
-                <option value="lastYear">Last Year</option>
-              </select>
-            </div>
-            <div className="parameter">
-              <label>Geographic Region:</label>
-              <select
-                value={generalMetrics.geographicRegion}
-                onChange={(e) => setGeneralMetrics({...generalMetrics, geographicRegion: e.target.value})}
-              >
-                <option value="all">All Regions</option>
-                <option value="north">North</option>
-                <option value="south">South</option>
-                <option value="east">East</option>
-                <option value="west">West</option>
-              </select>
+          <div style={{ marginBottom: '2rem', width: '100%', maxWidth: 900, display: 'flex', gap: 24, flexDirection: 'column' }}>
+            <h2 style={{ marginBottom: '2rem' }}>General-Purpose Metrics</h2>
+            <div className="parameters" style={{ display: 'flex', gap: 24 }}>
+              <div className="parameter">
+                <label>Claim Type:</label>
+                <select
+                  value={generalMetrics.claimType}
+                  onChange={(e) => setGeneralMetrics({...generalMetrics, claimType: e.target.value})}
+                >
+                  <option value="all">All Claims</option>
+                  <option value="health">Health Claims</option>
+                  <option value="auto">Auto Claims</option>
+                  <option value="property">Property Claims</option>
+                </select>
+              </div>
+              <div className="parameter">
+                <label>Time Period:</label>
+                <select
+                  value={generalMetrics.timePeriod}
+                  onChange={(e) => setGeneralMetrics({...generalMetrics, timePeriod: e.target.value})}
+                >
+                  <option value="last7days">Last 7 Days</option>
+                  <option value="last30days">Last 30 Days</option>
+                  <option value="last90days">Last 90 Days</option>
+                  <option value="lastYear">Last Year</option>
+                </select>
+              </div>
+              <div className="parameter">
+                <label>Geographic Region:</label>
+                <select
+                  value={generalMetrics.geographicRegion}
+                  onChange={(e) => setGeneralMetrics({...generalMetrics, geographicRegion: e.target.value})}
+                >
+                  <option value="all">All Regions</option>
+                  <option value="north">North</option>
+                  <option value="south">South</option>
+                  <option value="east">East</option>
+                  <option value="west">West</option>
+                </select>
+              </div>
             </div>
           </div>
         )}
@@ -1338,7 +1311,7 @@ const LinkedAnalytics = () => {
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {selectedSection === 'user' && (
             <>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '32px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', marginBottom: '32px', flexWrap: 'wrap' }}>
                 <svg ref={sparklineRef} style={{ width: '350px', height: '140px' }} />
                 <svg ref={bulletRef} style={{ width: '350px', height: '90px' }} />
                 <svg ref={radarRef} style={{ width: '350px', height: '260px' }} />

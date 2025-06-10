@@ -41,16 +41,16 @@ const StatusTracker = () => {
         return new Date(dateString).toLocaleString('en-US', options);
     };
 
-    const getStatusColor = (status) => {
+    const getStatusClass = (status) => {
         switch (status.toLowerCase()) {
             case 'approved':
-                return '#28a745';
+                return 'status-approved';
             case 'rejected':
-                return '#dc3545';
+                return 'status-rejected';
             case 'pending':
-                return '#ffc107';
+                return 'status-pending';
             default:
-                return '#6c757d';
+                return '';
         }
     };
 
@@ -69,7 +69,7 @@ const StatusTracker = () => {
             <div className="documents-list">
                 {verificationResults.map((doc, index) => (
                     <div key={index} className="document-item">
-                        <div className="document-header">
+                        <div className="document-file-summary">
                             <span className="document-icon">📄</span>
                             <span className="document-name">{doc.filename}</span>
                             <span className="verification-icon">
@@ -77,33 +77,31 @@ const StatusTracker = () => {
                             </span>
                         </div>
                         
-                        <div className="document-details">
-                            {doc.verification_result.valid ? (
-                                <>
-                                    {doc.verification_result.metadata && (
-                                        <div className="detail-section">
-                                            <h5>Document Info</h5>
-                                            <p>Format: {doc.verification_result.metadata.format}</p>
-                                            {doc.verification_result.metadata.width && (
-                                                <p>Size: {doc.verification_result.metadata.width} x {doc.verification_result.metadata.height}</p>
-                                            )}
-                                        </div>
-                                    )}
-                                    
-                                    {doc.verification_result.text_analysis && (
-                                        <div className="detail-section">
-                                            <h5>Content Analysis</h5>
-                                            <p>Words: {doc.verification_result.text_analysis.word_count}</p>
-                                            <p>Sentiment: {doc.verification_result.text_analysis.sentiment}</p>
-                                        </div>
-                                    )}
-                                </>
-                            ) : (
-                                <div className="error-message">
-                                    {doc.verification_result.reason}
-                                </div>
-                            )}
-                        </div>
+                        {doc.verification_result.valid ? (
+                            <div className="document-details-container">
+                                {doc.verification_result.metadata && (
+                                    <div className="detail-section">
+                                        <h5>Document Info</h5>
+                                        <p>Format: {doc.verification_result.metadata.format}</p>
+                                        {doc.verification_result.metadata.width && (
+                                            <p>Size: {doc.verification_result.metadata.width} x {doc.verification_result.metadata.height}</p>
+                                        )}
+                                    </div>
+                                )}
+                                
+                                {doc.verification_result.text_analysis && (
+                                    <div className="detail-section">
+                                        <h5>Content Analysis</h5>
+                                        <p>Words: {doc.verification_result.text_analysis.word_count}</p>
+                                        <p>Sentiment: {doc.verification_result.text_analysis.sentiment}</p>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="error-message">
+                                {doc.verification_result.reason}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
@@ -114,8 +112,8 @@ const StatusTracker = () => {
     if (error) return <div className="error">Error: {error}</div>;
 
     return (
-        <div className="status-tracker-container">
-            <h2>Claim Status Tracker</h2>
+        <div className="status-tracker">
+            <h1>Claim Status Tracker</h1>
             
             <div className="claims-timeline">
                 {claims.length === 0 ? (
@@ -131,8 +129,7 @@ const StatusTracker = () => {
                                 <div className="claim-title">
                                     <h3>Claim #{claim.id}</h3>
                                     <span 
-                                        className="status-indicator"
-                                        style={{ backgroundColor: getStatusColor(claim.status) }}
+                                        className={`status-indicator ${getStatusClass(claim.status)}`}
                                     >
                                         {claim.status}
                                     </span>

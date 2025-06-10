@@ -7,6 +7,7 @@ import TopCityPremiumBar from "./topcitybar";
 import NumericCorrelationHeatmap from "./heatmap";
 import SunburstChart from "./SunburstChart"; 
 import Chatbot from "../Chatbot";
+import '../Analytics.css';
 
 
 const chartOptions = [
@@ -46,24 +47,13 @@ export default function EmployeeAnalytics() {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {/* Side Menu */}
-      <div style={{ width: 250, background: "#f8f8f8", padding: 20, borderRight: "1px solid #ccc" }}>
-        <h3 style={{ marginBottom: 20 }}>Charts</h3>
+      <div className="linked-sidebar">
+        <h2>Charts</h2>
         {chartOptions.map((option) => (
           <button
             key={option.key}
             onClick={() => setSelectedChart(option.key)}
-            style={{
-              display: "block",
-              width: "100%",
-              marginBottom: 10,
-              padding: 10,
-              backgroundColor: selectedChart === option.key ? "#007bff" : "#e0e0e0",
-              color: selectedChart === option.key ? "#fff" : "#000",
-              border: "none",
-              borderRadius: 5,
-              cursor: "pointer",
-              textAlign: "left",
-            }}
+            className={`linked-sidebar-btn${selectedChart === option.key ? " active" : ""}`}
           >
             {option.label}
           </button>

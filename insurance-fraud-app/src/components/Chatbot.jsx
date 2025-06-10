@@ -27,7 +27,7 @@ const Chatbot = ({ sectionLabel, diagramLabels }) => {
   // Placeholder Gemini API call
   const callGemini = async (userMessage) => {
     setLoading(true);
-    const GEMINI_API_KEY = 'API-KEY-HERE';
+    const GEMINI_API_KEY = 'AIzaSyCPx36Gl4Kg6cjAr90QBQLaIx7FccU4IHQ';
     const context = getContext();
     const prompt = `Context: ${context}\nUser question: ${userMessage}`;
 
