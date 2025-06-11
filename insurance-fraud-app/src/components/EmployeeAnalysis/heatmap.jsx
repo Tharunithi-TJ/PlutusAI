@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import Plot from "react-plotly.js";
 import * as math from "mathjs";
+import "./heatmap.css"; // Import the new CSS file
 
 export default function NumericCorrelationHeatmap() {
   const [plotData, setPlotData] = useState(null);
   const [annotations, setAnnotations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     fetch("/data-given.xlsx")
       .then(res => res.arrayBuffer())
       .then(buffer => {
@@ -27,11 +30,17 @@ export default function NumericCorrelationHeatmap() {
           fields.map((_, j) => {
             const xi = matrix[i];
             const xj = matrix[j];
+            // Handle cases where std is zero to avoid NaN correlation
+            const stdX = math.std(xi) || 1e-10; // Add small epsilon to avoid division by zero
+            const stdY = math.std(xj) || 1e-10;
             const meanX = math.mean(xi);
             const meanY = math.mean(xj);
-            const cov = math.mean(xi.map((x, k) => (x - meanX) * (xj[k] - meanY)));
-            const stdX = math.std(xi);
-            const stdY = math.std(xj);
+            let cov = 0;
+            if (xi.length > 0) {
+              cov = math.mean(xi.map((x, k) => (x - meanX) * (xj[k] - meanY)));
+            }
+
+            if (stdX === 0 || stdY === 0) return 0; // If no variance, correlation is 0
             return cov / (stdX * stdY);
           })
         );
@@ -46,9 +55,10 @@ export default function NumericCorrelationHeatmap() {
               text: corrMatrix[i][j].toFixed(2),
               showarrow: false,
               font: {
-                color: Math.abs(corrMatrix[i][j]) > 0.5 ? "white" : "black",
+                // Dynamic text color for annotations based on correlation value
+                color: Math.abs(corrMatrix[i][j]) > 0.6 ? "white" : "#263238",
                 size: 14,
-                family: "Arial"
+                family: "Inter, sans-serif"
               }
             });
           }
@@ -61,43 +71,96 @@ export default function NumericCorrelationHeatmap() {
           x: fields,
           y: fields,
           type: "heatmap",
-          colorscale: "YlGnBu",
+          colorscale: [
+            [0, '#e74c3c'],   // Red for strong negative correlation
+            [0.5, '#fbc02d'],  // Yellow for low/no correlation
+            [1, '#2ecc71']    // Green for strong positive correlation
+          ],
           zmin: -1,
           zmax: 1,
-          colorbar: { title: "Correlation" }
+          colorbar: {
+            title: "Correlation",
+            titleside: "right",
+            thickness: 20,
+            len: 0.8,
+            x: 1.02,
+            y: 0.5,
+            tickfont: { size: 12, color: '#2c3e50' }
+          }
         });
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error loading or processing data:", err);
+        setLoading(false);
       });
   }, []);
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">🔥 Correlation Heatmap with Annotations</h2>
-      {plotData ? (
-        <Plot
-          data={[plotData]}
-          layout={{
-            width: 800,
-            height: 800,
-            margin: { t: 80, b: 80, l: 80, r: 80 },
-            annotations,
-            xaxis: {
-              title: "Fields",
-              side: "top",
-              
-              tickfont: { size: 14 }
-            },
-            yaxis: {
-              title: "Fields",
-              autorange: "reversed",
-              tickangle: -90,
-              tickfont: { size: 14 }
-            },
-            font: { family: "Arial", size: 14 }
-          }}
-          config={{ responsive: true }}
-        />
+    <div className="heatmap-container">
+      <div className="heatmap-header">
+        <h2>Numeric Correlation Heatmap</h2>
+        <p className="heatmap-subtitle">Visualizing correlations between key numerical features</p>
+      </div>
+      {loading ? (
+        <div className="heatmap-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading heatmap...</p>
+        </div>
+      ) : plotData ? (
+        <div className="heatmap-chart-wrapper">
+          <Plot
+            data={[plotData]}
+            layout={{
+              width: null,
+              height: 700,
+              margin: { t: 80, b: 80, l: 80, r: 80 },
+              annotations,
+              xaxis: {
+                title: "Fields",
+                side: "top",
+                tickangle: -45,
+                automargin: true,
+                tickfont: { size: 12, color: '#2c3e50' }
+              },
+              yaxis: {
+                title: "Fields",
+                autorange: "reversed",
+                tickangle: -45,
+                automargin: true,
+                tickfont: { size: 12, color: '#2c3e50' }
+              },
+              font: { 
+                family: "Inter, sans-serif", 
+                size: 14,
+                color: '#2c3e50'
+              },
+              paper_bgcolor: 'rgba(0,0,0,0)',
+              plot_bgcolor: 'rgba(0,0,0,0)',
+              hovermode: "closest",
+              autosize: true,
+            }}
+            config={{
+              responsive: true,
+              displayModeBar: true,
+              displaylogo: false,
+              modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+              toImageButtonOptions: {
+                format: 'png',
+                filename: 'correlation_heatmap',
+                height: 700,
+                width: 800,
+                scale: 2
+              }
+            }}
+            useResizeHandler={true}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
       ) : (
-        <p>Loading heatmap...</p>
+        <div className="heatmap-error">
+          <p>No data available or error loading the heatmap.</p>
+        </div>
       )}
     </div>
   );

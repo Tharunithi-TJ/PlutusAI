@@ -77,36 +77,51 @@
   perspective: 1000px;
 }
 
-/* Enhanced PlutusAI Logo with Glitter Effect */
+/* Professional PlutusAI Logo Styling */
 .login-box h1 {
   position: relative;
-  color: #E31C79;
-  margin-bottom: 20px;
-  font-size: 3rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #FF1B7B 0%, #FFD700 20%, #7928CA 50%, #FFD700 80%, #4B0082 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #1a237e;
+  margin-bottom: 25px;
+  font-size: 3.2rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  padding-bottom: 10px;
+  letter-spacing: 1.5px;
+  padding-bottom: 12px;
   display: inline-block;
-  text-shadow: 0 2px 8px rgba(227, 28, 121, 0.3);
-  animation: shine 3s ease-in-out infinite alternate;
+  text-shadow: 0 2px 4px rgba(26, 35, 126, 0.2);
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  animation: subtleFade 2s ease-in-out;
+  position: relative;
+  overflow: hidden;
 }
 
-@keyframes shine {
-  0% {
-    background-position: 0% 50%;
-    text-shadow: 0 2px 8px rgba(227, 28, 121, 0.3);
+.login-box h1 span {
+  display: inline-block;
+  background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: translateZ(20px);
+  transition: transform 0.3s ease;
+}
+
+.login-box h1 .dot {
+  font-size: 3.5rem;
+  margin: 0 2px;
+  background: linear-gradient(135deg, #3949ab 0%, #1a237e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: translateZ(25px);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: translateZ(25px) scale(1);
   }
   50% {
-    background-position: 100% 50%;
-    text-shadow: 0 4px 16px rgba(227, 28, 121, 0.5), 0 0 20px rgba(255, 215, 0, 0.6);
-  }
-  100% {
-    background-position: 0% 50%;
-    text-shadow: 0 2px 8px rgba(227, 28, 121, 0.3), 0 0 30px rgba(255, 215, 0, 0.8);
+    opacity: 1;
+    transform: translateZ(25px) scale(1.1);
   }
 }
 
@@ -116,19 +131,29 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 60%;
+  width: 70%;
   height: 3px;
   background: linear-gradient(90deg, 
     transparent 0%, 
-    #FF1B7B 25%, 
-    #FFD700 40%,
-    #7928CA 50%, 
-    #FFD700 60%,
-    #4B0082 75%, 
+    #1a237e 30%,
+    #3949ab 50%, 
+    #1a237e 70%,
     transparent 100%
   );
-  border-radius: 3px;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(26, 35, 126, 0.2);
+  animation: subtleLine 3s ease-in-out infinite;
+}
+
+@keyframes subtleLine {
+  0%, 100% {
+    opacity: 0.8;
+    width: 70%;
+  }
+  50% {
+    opacity: 1;
+    width: 75%;
+  }
 }
 
 .login-box h1::after {
@@ -138,44 +163,102 @@
   height: 100%;
   background: radial-gradient(
     circle at center,
-    rgba(255, 215, 0, 0.3) 0%,
+    rgba(26, 35, 126, 0.1) 0%,
     transparent 70%
   );
   top: 0;
   left: 0;
   z-index: -1;
-  animation: glow 2s ease-in-out infinite alternate;
+  animation: subtlePulse 4s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+/* Add subtle shine effect */
+.login-box h1 .shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shine 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  20%, 100% {
+    left: 200%;
+  }
+}
+
+@keyframes subtleFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Add subtle 3D effect */
+.login-box h1 {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.login-box h1 span {
+  display: inline-block;
+  transform: translateZ(20px);
+  transition: transform 0.3s ease;
+}
+
+.login-box h1:hover span {
+  transform: translateZ(30px);
+}
+
+/* Add subtle letter spacing animation */
+@keyframes letterSpacing {
+  0%, 100% {
+    letter-spacing: 1.5px;
+  }
+  50% {
+    letter-spacing: 2px;
+  }
+}
+
+.login-box h1 {
+  animation: 
+    subtleFade 2s ease-in-out,
+    letterSpacing 4s ease-in-out infinite;
 }
 
 /* Glitter particles effect */
 .glitter {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: -1;
-  overflow: hidden;
+  display: none;
 }
 
 .glitter-particle {
-  position: absolute;
-  background: rgba(255, 215, 0, 0.8);
-  border-radius: 50%;
-  pointer-events: none;
-  animation: glitter-fall linear infinite;
-}
-
-@keyframes glitter-fall {
-  0% {
-    transform: translateY(-100%) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh) rotate(360deg);
-    opacity: 0;
-  }
+  display: none;
 }
 
 /* Rest of your existing styles with minor enhancements */

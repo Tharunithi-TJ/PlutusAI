@@ -86,7 +86,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h1>PlutusAI</h1>
+        <h1><span>Plutus</span><span className="dot">.</span><span>AI</span></h1>
         <h2>Sign in to your account</h2>
         <p className="subtitle">Insurance Fraud Detection System</p>
 

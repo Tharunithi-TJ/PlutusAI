@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import Plot from "react-plotly.js";
+import "./PremiumMaritalFraudParallel.css";
 
 export default function PremiumMaritalFraudParallel() {
   const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     fetch("/data-given.xlsx")
       .then(res => res.arrayBuffer())
       .then(buffer => {
@@ -40,19 +43,22 @@ export default function PremiumMaritalFraudParallel() {
             label: "Payment Mode",
             tickvals: Object.values(modeMap),
             ticktext: Object.keys(modeMap),
-            values: filtered.map(r => modeMap[r.mode])
+            values: filtered.map(r => modeMap[r.mode]),
+            categoryorder: "category ascending"
           },
           {
             label: "Marital Status",
             tickvals: Object.values(maritalMap),
             ticktext: Object.keys(maritalMap),
-            values: filtered.map(r => maritalMap[r.marital])
+            values: filtered.map(r => maritalMap[r.marital]),
+            categoryorder: "category ascending"
           },
           {
             label: "Fraud Category",
             tickvals: Object.values(fraudMap),
             ticktext: Object.keys(fraudMap),
-            values: filtered.map(r => fraudMap[r.fraud])
+            values: filtered.map(r => fraudMap[r.fraud]),
+            categoryorder: "category ascending"
           }
         ];
 
@@ -61,33 +67,92 @@ export default function PremiumMaritalFraudParallel() {
             type: "parcats",
             dimensions,
             line: {
-              color: "blue"
+              colorscale: [[0, '#1976d2'], [0.5, '#2ecc71'], [1, '#e74c3c']], // Blue to Green to Red for fraud
+              cmin: 0,
+              cmax: frauds.length - 1,
+              color: filtered.map(r => fraudMap[r.fraud]),
+              shape: 'hspline',
+              showscale: false
             },
             hoveron: "color",
-            labelfont: { size: 12 },
-            tickfont: { size: 10 },
-            arrangement: "freeform"
+            labelfont: { 
+              size: 14,
+              color: '#2c3e50',
+              family: 'Inter, sans-serif'
+            },
+            tickfont: { 
+              size: 12,
+              color: '#2c3e50',
+              family: 'Inter, sans-serif'
+            },
+            arrangement: "perpendicular",
+            bundlecolors: true,
+            sortpaths: "forward"
           }
         ]);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error loading or processing data:", err);
+        setLoading(false);
       });
   }, []);
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">
-        🪢 Parallel Categories: Payment Mode → Marital → Fraud
-      </h2>
-      {chartData.length > 0 ? (
-        <Plot
-          data={chartData}
-          layout={{
-            margin: { t: 30, l: 50, r: 50, b: 30 },
-            width: 850,
-            height: 500
-          }}
-        />
+    <div className="parallel-container">
+      <div className="parallel-header">
+        <h2>Parallel Categories: Payment Mode → Marital Status → Fraud Category</h2>
+        <p className="parallel-subtitle">Exploring relationships between payment modes, marital statuses, and fraud outcomes</p>
+      </div>
+      {loading ? (
+        <div className="parallel-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading Parallel Categories diagram...</p>
+        </div>
+      ) : chartData.length > 0 ? (
+        <div className="parallel-chart-wrapper">
+          <Plot
+            data={chartData}
+            layout={{
+              margin: { t: 40, l: 50, r: 50, b: 40 },
+              width: null, // Allow responsiveness
+              height: 500,
+              paper_bgcolor: 'rgba(0,0,0,0)',
+              plot_bgcolor: 'rgba(0,0,0,0)',
+              font: { 
+                family: 'Inter, sans-serif',
+                size: 14,
+                color: '#2c3e50'
+              },
+              hovermode: "closest",
+              autosize: true,
+              hoverlabel: {
+                bgcolor: "#eceff1",
+                bordercolor: "#90a4ae",
+                font: { size: 14, color: "#263238" }
+              }
+            }}
+            config={{ 
+              responsive: true,
+              displayModeBar: true,
+              displaylogo: false,
+              modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+              toImageButtonOptions: {
+                format: 'png',
+                filename: 'parallel_categories_diagram',
+                height: 500,
+                width: 850,
+                scale: 2
+              }
+            }}
+            useResizeHandler={true}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
       ) : (
-        <p>Loading parallel categories...</p>
+        <div className="parallel-error">
+          <p>Error loading the Parallel Categories diagram. Please try again later.</p>
+        </div>
       )}
     </div>
   );

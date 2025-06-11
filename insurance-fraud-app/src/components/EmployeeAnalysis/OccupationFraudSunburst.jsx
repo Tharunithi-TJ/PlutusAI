@@ -56,25 +56,25 @@ export default function OccupationFraudTreemap() {
             hovertemplate: "<b>%{label}</b><br>Premium: %{value:,.0f}<br>Percentage: %{percentParent:.1%}<extra></extra>",
             marker: {
               colorscale: [
-                [0, '#2c3e50'],    // Dark blue for total
-                [0.2, '#3498db'],  // Blue for occupations
-                [0.4, '#2980b9'],  // Medium blue
-                [0.6, '#1abc9c'],  // Teal
-                [0.8, '#16a085'],  // Dark teal
-                [1, '#27ae60']     // Green for fraud categories
+                [0, '#1976d2'],    // Dark blue for total
+                [0.2, '#2196f3'],  // Blue for occupations
+                [0.4, '#42a5f5'],  // Medium blue
+                [0.6, '#2ecc71'],  // Teal
+                [0.8, '#43a047'],  // Dark teal
+                [1, '#66bb6a']     // Green for fraud categories
               ],
-              line: { width: 2, color: '#fff' }
+              line: { width: 2, color: '#eceff1' } // Light border
             },
             textfont: {
               size: 14,
-              color: '#fff',
-              family: 'Arial'
+              color: '#2c3e50',
+              family: 'Inter, sans-serif'
             },
             textposition: "middle center",
             hoverlabel: {
-              bgcolor: '#2c3e50',
-              bordercolor: '#fff',
-              font: { size: 14, color: '#fff', family: 'Arial' }
+              bgcolor: '#eceff1',
+              bordercolor: '#90a4ae',
+              font: { size: 14, color: '#263238', family: 'Inter, sans-serif' }
             },
             hoveron: "all",
             hovermode: "closest",
@@ -90,27 +90,47 @@ export default function OccupationFraudTreemap() {
   }, []);
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">
-        🧩 Occupation → Fraud Category (Treemap)
-      </h2>
+    <div className="treemap-container">
+      <div className="treemap-header">
+        <h2>Occupation → Fraud Category (Treemap)</h2>
+        <p className="treemap-subtitle">Analyzing fraud distribution across different occupations</p>
+      </div>
       {chartData.length > 0 ? (
-        <Plot
-          data={chartData}
-          layout={{
-            width: 850,
-            height: 700,
-            margin: { t: 40, l: 0, r: 0, b: 0 },
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: 'rgba(0,0,0,0)',
-            hovermode: "closest",
-            hoverdistance: 100
-          }}
-          config={{ 
-            responsive: true,
-            displayModeBar: false
-          }}
-        />
+        <div className="treemap-chart-wrapper">
+          <Plot
+            data={chartData}
+            layout={{
+              width: null, // Make responsive
+              height: 700,
+              margin: { t: 40, l: 0, r: 0, b: 0 },
+              paper_bgcolor: 'rgba(0,0,0,0)',
+              plot_bgcolor: 'rgba(0,0,0,0)',
+              hovermode: "closest",
+              hoverdistance: 100,
+              autosize: true,
+              font: {
+                family: 'Inter, sans-serif',
+                size: 14,
+                color: '#2c3e50'
+              }
+            }}
+            config={{ 
+              responsive: true,
+              displayModeBar: true,
+              displaylogo: false,
+              modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+              toImageButtonOptions: {
+                format: 'png',
+                filename: 'treemap_diagram',
+                height: 700,
+                width: 850,
+                scale: 2
+              }
+            }}
+            useResizeHandler={true}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
       ) : (
         <p>Loading interactive chart...</p>
       )}
